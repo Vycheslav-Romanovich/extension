@@ -1,0 +1,57 @@
+$elang: rgba(79, 110, 253);
+$elangHover: rgb(70, 100, 234);
+$elangActive: rgb(58, 83, 194);
+$elang03: rgba(79, 110, 253, 0.3);
+$elang02: rgba(79, 110, 253, 0.2);
+$elang01: rgba(79, 110, 253, 0.1);
+
+.App {
+  // position: absolute;
+  // top: 0;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
+  // text-align: center;
+  // height: 100%;
+  // padding: 10px;
+  // background-color: #282c34;
+}
+
+
+.App-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.App-logo {
+  height: 40px;
+  pointer-events: none;
+}
+
+.LogoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .LogoTitle {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+
+    .Title {
+      font-size: 26px;
+      font-weight: 700;
+      color: $elang;
+    }
+
+    .Subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: $elang;
+    }
+  }
+
+}

@@ -1,0 +1,197 @@
+$elang: rgba(79, 110, 253);
+$elangHover: rgb(70, 100, 234);
+$elangActive: rgb(58, 83, 194);
+$elang03: rgba(79, 110, 253, 0.3);
+$elang02: rgba(79, 110, 253, 0.2);
+$elang01: rgba(79, 110, 253, 0.1);
+
+$elangAccent: rgb(124, 148, 255);
+
+.SelectedContainer {
+  background-color: $elang02;
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  box-shadow: -1px 5px 10px 3px $elang02;
+  border: 1px solid $elang03;
+}
+
+.ButtonsContainer {
+  margin-top: 5px;
+  width: 100%;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .ButtonsBloc {
+    // height: 100%;
+    width: auto;
+    box-shadow: -1px 5px 10px 3px $elang03;
+    background-color: $elangAccent;
+    border-radius: 7px;
+    border: 1px solid $elang;
+    pointer-events: all;
+    padding: 3px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: 5px;
+  }
+}
+
+.SpeachButton {
+
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  background-color: $elang;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 5px 10px;
+
+  &:hover {
+    background-color: $elangHover;
+  }
+
+  &:active {
+    background-color: $elangActive;
+  }
+
+}
+
+// .SpeachButton:hover {
+//   background-color: $elangHover;
+// }
+
+.PlayPauseButton {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  height: auto;
+  width: 30px;
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
+.CloseButton {
+  pointer-events: all;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  height: 22px;
+  position: absolute;
+  right: -13px;
+  top: -13px;
+  box-shadow: -1px 5px 10px 3px $elang03;
+  border-radius: 100%;
+  background-color: $elang;
+
+  &:hover {
+    background-color: $elangHover;
+  }
+
+  &:active {
+    background-color: $elangActive;
+  }
+
+  svg {
+    fill: $elang;
+    scale: 1;
+
+    &:hover {
+      fill: $elangHover;
+    }
+
+    &:active {
+      fill: $elangActive;
+    }
+  }
+}
+
+.TranslateButton {
+  cursor: pointer;
+  background: none;
+  border: none;
+  // padding: 0;
+  height: 30px;
+  width: 30px;
+  background-color: $elang;
+  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: $elangHover;
+  }
+
+  &:active {
+    background-color: $elangActive;
+  }
+
+  svg {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.SaveButton {
+  cursor: pointer;
+  background: none;
+  border: none;
+  // padding: 0;
+  height: 30px;
+  width: 30px;
+  background-color: $elang;
+  border-radius: 7px;
+
+  &:hover {
+    background-color: $elangHover;
+  }
+
+  &:active {
+    background-color: $elangActive;
+  }
+
+  svg {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.lds-dual-ring {
+  display: flex;
+  height: 30px;
+  width: 30px;
+  justify-content: center;
+  align-items: center;
+}
+
+.lds-dual-ring:after {
+  content: "";
+  display: block;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,56 +1,110 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import useStorage from "@root/src/shared/hooks/useStorage";
 import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
-import {
-  CloseButton,
-  PlayPauseButton,
-  SaveButton,
-  SpeachButton,
-  TranslateButton,
-} from "./Buttons";
-
-export const getWordAt = (str: string, pos: number) => {
-  str = String(str);
-  pos = Number(pos) >>> 0;
-  const left = str.slice(0, pos + 1).search(/\S+$/),
-    right = str.slice(pos).search(/\s/);
-  if (right < 0) {
-    return str.slice(left);
-  }
-  return str.slice(left, right + pos);
-};
+import { CloseButton, PlayPauseButton, SpeachButton } from "./Buttons";
 
 export const App = () => {
   const { extensionEnabled } = useStorage(extensionStorage);
   const [commentURL, setCommentURL] = useState("");
   const documentRef = useRef(document);
-  const [hoveredElement, setHoveredElement] = useState<boolean>(
-    false
-  );
-  const [oldElementText, setOldElementText] = useState<string>();
+  const [hoveredElement, setHoveredElement] = useState<boolean>(false);
   const [elementSizes, setElementSizes] = useState<DOMRect | null>(null);
-  const [isPlay, setIsPlay] = useState<boolean>(false);
-  const [pause, setPause] = useState<boolean>(false);
-
-  const [translated, setTranslated] = useState<{
-    text: string;
-    translation: string;
-  }>(null);
+  const [isCloseUselessTab, setCloseUselessTab] = useState<boolean>(false);
+  const [userData, setUserData] = useState<any>(false);
   const synth = window.speechSynthesis;
+  const clipboard = navigator.clipboard;
 
+  useEffect(() => {
+    if (userData && isCloseUselessTab) {
+      clipboard
+        .writeText(String(JSON.stringify(userData)))
+        .then(() => {
+          console.log("Текст скопирован в буфер обмена");
+        })
+        .catch((err) => {
+          console.error("Не удалось скопировать текст в буфер обмена: ", err);
+        });
+    }
+  }, [userData, isCloseUselessTab]);
+
+  function waitForElementToExist(selector, callback) {
+    const element = document.getElementsByClassName(selector);
+    if (element && element.length > 0) {
+      callback(element);
+    } else {
+      setTimeout(function () {
+        waitForElementToExist(selector, callback);
+      }, 1000);
+    }
+  }
+
+  const getUserData = () => {
+    const profileOwnersName = document.querySelector(
+      ".text-heading-xlarge"
+    ).innerHTML;
+    let expirience = document.getElementsByClassName(
+      "artdeco-card pv-profile-card break-words mt2"
+    );
+    let experiencePure;
+    for (let i = 0; i < expirience.length; i++) {
+      if (expirience[i].querySelector("#experience")) {
+        experiencePure =
+          expirience[i].getElementsByClassName("pvs-entity--padded");
+      }
+    }
+
+    let exp = experiencePure[0].getElementsByClassName("visually-hidden");
+    // console.log(experiencePure[0])
+    /*
+      exp[0] - image company
+      exp[1] - position
+      exp[2] - company
+      exp[3] - experiense
+      exp[4] - place of work
+      exp[5] - about work
+      exp[6] - skills
+    */
+    const lastWord = {
+      name: profileOwnersName,
+      position: exp[1].textContent,
+      company: exp[2]?.textContent,
+      expirience: exp[3]?.textContent,
+      about: exp[4]?.textContent,
+      place: exp[5]?.textContent,
+      skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
+      link: window.location.href,
+    };
+
+    setUserData(lastWord);
+    setCloseUselessTab(true);
+    setTimeout(() => {
+      window.close();
+    }, 1000);
+
+    return lastWord;
+  };
+
+  console.log(userData, isCloseUselessTab);
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
-
+    if (userData && isCloseUselessTab) {
+      console.log("sdfs");
+      clipboard
+        .writeText(String(JSON.stringify(userData)))
+        .then(() => {
+          console.log("Текст скопирован в буфер обмена");
+        })
+        .catch((err) => {
+          console.error("Не удалось скопировать текст в буфер обмена: ", err);
+        });
+    }
     if (element.tagName === "SPAN" && extensionEnabled) {
-      setHoveredElement(true);
-      setElementSizes(element.getBoundingClientRect());
       console.log(element.innerText);
       const scrollContent = document.getElementsByClassName(
         "scaffold-finite-scroll__content"
       )[0];
 
       const listOfPost = scrollContent.querySelectorAll(":scope > div");
-      console.log(listOfPost);
       for (let i = 0; i < listOfPost.length; i++) {
         if (
           listOfPost[i] &&
@@ -77,6 +131,9 @@ export const App = () => {
                 listOfComment[j].querySelector("a").href,
                 "_blank"
               );
+              // setCloseUselessTab(false);
+              setHoveredElement(true);
+              setElementSizes(element.getBoundingClientRect());
               setCommentURL(listOfComment[j].querySelector("a").href);
             }
           }
@@ -87,7 +144,7 @@ export const App = () => {
   }, []);
 
   const onClickSpeech = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
+    setHoveredElement(false);
     window.open(commentURL, "_blank");
   };
 
@@ -100,8 +157,6 @@ export const App = () => {
     event.stopPropagation();
   };
 
-  const onClickPlayPause = (event: React.MouseEvent<HTMLElement>) => {};
-
   const onClickClose = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setHoveredElement(false);
@@ -110,15 +165,17 @@ export const App = () => {
   useEffect(() => {
     synth.cancel();
 
+    documentRef.current.addEventListener("focus", () => {
+      console.log("asasfafafffffffff");
+    });
     documentRef.current.addEventListener("click", onClickElement);
-
-    return () => {
-      if (hoveredElement) {
-        // hoveredElement.innerHTML = oldElementText;
-      }
-      setIsPlay(false);
-      documentRef.current.removeEventListener("click", () => {}, false);
-    };
+    documentRef.current.removeEventListener("click", () => {}, false);
+    if (window.location.href.includes("linkedin.com/in/") && extensionEnabled) {
+      waitForElementToExist(
+        "artdeco-card pv-profile-card break-words mt2",
+        getUserData
+      );
+    }
   }, [hoveredElement, extensionEnabled]);
 
   return (
@@ -140,11 +197,6 @@ export const App = () => {
           </div>
           <div className="ButtonsContainer">
             <div className="ButtonsBloc">
-              <PlayPauseButton
-                isPlay={isPlay}
-                pause={pause}
-                onClickPlayPause={onClickPlayPause}
-              />
               <SpeachButton onClickSpeach={onClickSpeech} />
               {/* <TranslateButton
                 isLoadingTranslate={isLoadingTranslate}

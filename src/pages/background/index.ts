@@ -10,29 +10,13 @@ export const getTranslate = async (request, sender, sendResponse) => {
   sendResponse(data);
 };
 
+chrome.tabs.onCreated.addListener((tab) => {
+  console.log("New taab " + tab.url);
+});
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.type === "translate") {
     getTranslate(request, sender, sendResponse);
   }
   return true;
 });
-
-// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-//   // read changeInfo data and do something with it
-//   // like send the new url to contentscripts.js
-//   console.log(changeInfo);
-  
-//   if (changeInfo) {
-//     // chrome.tabs.sendMessage(tabId, {
-//     //   message: "change",
-//     // });
-
-      
-//       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-//         chrome.tabs.sendMessage(tabs[0].id, {
-//           message: "change",
-//         });
-//       });
-//   }
-//   return true;
-// });

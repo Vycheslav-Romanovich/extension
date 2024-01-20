@@ -31,7 +31,7 @@ export const App = () => {
         userInfo: userInfo,
       });
     }
-  }, [linkAuthorComment, textPost, textComment]);
+  }, [linkAuthorComment, textPost, textComment, userInfo, isParsing]);
 
   function waitForElementToExist(selector, callback) {
     const element = document.getElementsByClassName(selector);
@@ -157,7 +157,7 @@ export const App = () => {
   }, []);
 
   const onClickSpeech = (event: React.MouseEvent<HTMLElement>) => {
-    setHoveredElement(false);
+    // setHoveredElement(false);
     extensionStorage.setIsParsing(true);
     window.open(commentURL, "_blank");
   };

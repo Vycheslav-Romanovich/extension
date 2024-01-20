@@ -85,14 +85,11 @@ export const App = () => {
     };
     setUserData(lastWord);
     extensionStorage.setUserInfo(lastWord);
-
     setTimeout(() => {
       extensionStorage.setIsParsing(false);
-    }, 1000);
-    setTimeout(() => {
-      console.log(userInfo);
-      extensionStorage.setIsParsing(false);
-      window.close();
+      if (isParsing) {
+        window.close();
+      }
     }, 1200);
 
     return lastWord;

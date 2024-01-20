@@ -4,33 +4,53 @@ import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
 import { CloseButton, PlayPauseButton, SpeachButton } from "./Buttons";
 
 export const App = () => {
-  const { extensionEnabled } = useStorage(extensionStorage);
+  const { extensionEnabled, userInfo } = useStorage(extensionStorage);
   const [commentURL, setCommentURL] = useState("");
   const documentRef = useRef(document);
   const [hoveredElement, setHoveredElement] = useState<boolean>(false);
   const [elementSizes, setElementSizes] = useState<DOMRect | null>(null);
-  const [isCloseUselessTab, setCloseUselessTab] = useState<boolean>(false);
   const [userData, setUserData] = useState<any>(false);
+  const [textComment, setTextComment] = useState("");
+  const [textPost, setTextPost] = useState("");
+  const [linkAuthorComment, setLinkAuthorComment] = useState("");
   const synth = window.speechSynthesis;
   const clipboard = navigator.clipboard;
-
   useEffect(() => {
-    if (userData && isCloseUselessTab) {
-      clipboard
-        .writeText(String(JSON.stringify(userData)))
-        .then(() => {
-          console.log("Текст скопирован в буфер обмена");
-        })
-        .catch((err) => {
-          console.error("Не удалось скопировать текст в буфер обмена: ", err);
-        });
+    if (
+      userInfo &&
+      linkAuthorComment.length > 0 &&
+      textComment.length > 0 &&
+      textPost.length > 0
+    ) {
+      console.log({
+        textPost: textPost,
+        textComment: textComment,
+        linkAuthorComment: linkAuthorComment,
+        userInfo:userInfo,
+      });
     }
-  }, [userData, isCloseUselessTab]);
+  }, [linkAuthorComment, textPost, textComment, userData]);
+
+  // useEffect(() => {
+  //   if (userData && isCloseUselessTab) {
+  //     clipboard
+  //       .writeText(String(JSON.stringify(userData)))
+  //       .then(() => {
+  //         console.log("Текст скопирован в буфер обмена");
+  //       })
+  //       .catch((err) => {
+  //         console.error("Не удалось скопировать текст в буфер обмена: ", err);
+  //       });
+  //   }
+  // }, [userData, isCloseUselessTab]);
 
   function waitForElementToExist(selector, callback) {
     const element = document.getElementsByClassName(selector);
     if (element && element.length > 0) {
-      callback(element);
+      console.log("ready");
+      setTimeout(function () {
+        callback(element);
+      }, 1000);
     } else {
       setTimeout(function () {
         waitForElementToExist(selector, callback);
@@ -74,9 +94,8 @@ export const App = () => {
       skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
       link: window.location.href,
     };
-
-    setUserData(lastWord);
-    setCloseUselessTab(true);
+    // setUserData(lastWord);
+    extensionStorage.setUserInfo(lastWord);
     setTimeout(() => {
       window.close();
     }, 1000);
@@ -84,10 +103,10 @@ export const App = () => {
     return lastWord;
   };
 
-  console.log(userData, isCloseUselessTab);
+  // console.log(userData, isCloseUselessTab);
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
-    if (userData && isCloseUselessTab) {
+    if (userData ) {
       console.log("sdfs");
       clipboard
         .writeText(String(JSON.stringify(userData)))
@@ -99,7 +118,7 @@ export const App = () => {
         });
     }
     if (element.tagName === "SPAN" && extensionEnabled) {
-      console.log(element.innerText);
+      setTextComment(element.innerText);
       const scrollContent = document.getElementsByClassName(
         "scaffold-finite-scroll__content"
       )[0];
@@ -119,17 +138,19 @@ export const App = () => {
           let postContainer = listOfPost[i].getElementsByClassName(
             "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
           )[0];
-          // console.log(postContainer.querySelector('span[dir="ltr"]').innerHTML);
+          setTextPost(postContainer.querySelector('span[dir="ltr"]').innerHTML);
           for (let j = 0; j < listOfPost.length - 1; j++) {
             if (
               listOfComment[j] &&
               listOfComment[j].innerHTML &&
-              listOfComment[j].innerHTML.includes(element.innerHTML.slice(0, 50))
+              listOfComment[j].innerHTML.includes(
+                element.innerHTML.slice(0, 50)
+              )
             ) {
+              setLinkAuthorComment(listOfComment[j].querySelector("a").href);
               console.log(
                 "link to author of comment -",
-                listOfComment[j].querySelector("a").href,
-                "_blank"
+                listOfComment[j].querySelector("a").href
               );
               // setCloseUselessTab(false);
               setHoveredElement(true);
@@ -146,15 +167,6 @@ export const App = () => {
   const onClickSpeech = (event: React.MouseEvent<HTMLElement>) => {
     setHoveredElement(false);
     window.open(commentURL, "_blank");
-  };
-
-  const onClickSave = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-    console.log("save");
-  };
-
-  const onClickTranslate = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
   };
 
   const onClickClose = (event: React.MouseEvent<HTMLElement>) => {

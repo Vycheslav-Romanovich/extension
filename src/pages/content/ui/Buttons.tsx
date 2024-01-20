@@ -40,17 +40,16 @@ export const SpeachButton = ({ onClickSpeach }) => {
   );
 };
 
-export const PlayPauseButton = ({ isPlay, pause, onClickPlayPause }) => {
+export const PlayPauseButton = ({onShowData}) => {
   return (
     <>
-      {isPlay && (
         <button
-          onClick={(event) => onClickPlayPause(event)}
+          onClick={(event) => onShowData(event)}
           className="PlayPauseButton"
         >
-          {pause ? <PlaySVG color="#fff" /> : <PauseSVG color="#fff" />}
+          <PlaySVG color="#fff" />
         </button>
-      )}
+      
     </>
   );
 };

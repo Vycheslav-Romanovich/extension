@@ -17,21 +17,30 @@ export const App = () => {
   const synth = window.speechSynthesis;
   const clipboard = navigator.clipboard;
 
-  useEffect(() => {
-    if (
-      userInfo &&
-      linkAuthorComment.length > 0 &&
-      textComment.length > 0 &&
-      textPost.length > 0
-    ) {
-      console.log({
-        textPost: textPost,
-        textComment: textComment,
-        linkAuthorComment: linkAuthorComment,
-        userInfo: userInfo,
-      });
-    }
-  }, [linkAuthorComment, textPost, textComment, userInfo, isParsing]);
+  // useEffect(() => {
+  //   if (
+  //     userInfo &&
+  //     linkAuthorComment.length > 0 &&
+  //     textComment.length > 0 &&
+  //     textPost.length > 0
+  //   ) {
+  //     console.log({
+  //       textPost: textPost,
+  //       textComment: textComment,
+  //       linkAuthorComment: linkAuthorComment,
+  //       userInfo: userInfo,
+  //     });
+  //   }
+  // }, [linkAuthorComment, textPost, textComment, userInfo, isParsing]);
+
+  const onShowData = () => {
+    console.log({
+      textPost: textPost,
+      textComment: textComment,
+      linkAuthorComment: linkAuthorComment,
+      userInfo: userInfo,
+    });
+  };
 
   function waitForElementToExist(selector, callback) {
     const element = document.getElementsByClassName(selector);
@@ -190,26 +199,48 @@ export const App = () => {
   return (
     <>
       {hoveredElement && extensionEnabled && (
-        <div
-          style={{
-            position: "absolute",
-            width: elementSizes.width + 10,
-            height: elementSizes.height + 10,
-            top: elementSizes.top - 5 + window.scrollY,
-            left: elementSizes.left - 5,
-            pointerEvents: "none",
-            zIndex: 999,
-          }}
-        >
-          <div className="SelectedContainer">
-            <CloseButton onClickClose={onClickClose} />
-          </div>
-          <div className="ButtonsContainer">
-            <div className="ButtonsBloc">
-              <SpeachButton onClickSpeach={onClickSpeech} />
+        <>
+          <div
+            style={{
+              position: "absolute",
+              width: elementSizes.width + 10,
+              height: elementSizes.height + 10,
+              top: elementSizes.top - 5 + window.scrollY,
+              left: elementSizes.left - 5,
+              pointerEvents: "none",
+              zIndex: 999,
+            }}
+          >
+            <div className="SelectedContainer">
+              <CloseButton onClickClose={onClickClose} />
+            </div>
+            <div className="ButtonsContainer">
+              <div className="ButtonsBloc">
+                <SpeachButton onClickSpeach={onClickSpeech} />
+              </div>
+              <div className="ButtonsBloc">
+                <PlayPauseButton onShowData={onShowData} />
+              </div>
             </div>
           </div>
-        </div>
+          <div
+            style={{
+              position: "absolute",
+              
+              top: elementSizes.top - 5 + window.scrollY,
+              left: elementSizes.left + elementSizes.width + 20,
+              pointerEvents: "none",
+              zIndex: 999,
+            }}
+          >
+            <div className="SelectedContainerText">
+              <span>{textPost}</span>
+              <span>{textComment}</span>
+              <span>{linkAuthorComment}</span>
+              userInfo: userInfo,
+            </div>
+          </div>
+        </>
       )}
     </>
   );

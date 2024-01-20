@@ -15,7 +15,13 @@ $elangAccent: rgb(124, 148, 255);
   box-shadow: -1px 5px 10px 3px $elang02;
   border: 1px solid $elang03;
 }
-
+.SelectedContainerText{
+  background-color: #FFFFFF;
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  border: 1px solid $elang03;
+}
 .ButtonsContainer {
   margin-top: 5px;
   width: 100%;

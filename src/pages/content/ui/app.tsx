@@ -97,60 +97,65 @@ export const App = () => {
 
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
-    if (userData) {
-      clipboard
-        .writeText(String(JSON.stringify(userData)))
-        .then(() => {
-          console.log("Текст скопирован в буфер обмена");
-        })
-        .catch((err) => {
-          console.error("Не удалось скопировать текст в буфер обмена: ", err);
-        });
-    }
-    if (element.tagName === "SPAN" && extensionEnabled) {
-      setTextComment(element.innerText);
-      const scrollContent = document.getElementsByClassName(
-        "scaffold-finite-scroll__content"
-      )[0];
+    const ariaHiddenValue = element.getAttribute("aria-hidden");
+    if (ariaHiddenValue === "true") {
+      console.log("its not a comment");
+    } else {
+      if (userData) {
+        clipboard
+          .writeText(String(JSON.stringify(userData)))
+          .then(() => {
+            console.log("Текст скопирован в буфер обмена");
+          })
+          .catch((err) => {
+            console.error("Не удалось скопировать текст в буфер обмена: ", err);
+          });
+      }
+      if (element.tagName === "SPAN" && extensionEnabled) {
+        setTextComment(element.innerText);
+        const scrollContent = document.getElementsByClassName(
+          "scaffold-finite-scroll__content"
+        )[0];
 
-      const listOfPost = scrollContent.querySelectorAll(":scope > div");
-      for (let i = 0; i < listOfPost.length; i++) {
-        if (
-          listOfPost[i] &&
-          listOfPost[i].innerHTML &&
-          listOfPost[i].innerHTML.includes(element.innerHTML.slice(0, 50))
-        ) {
-          let postContainer = listOfPost[i].getElementsByClassName(
-            "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
-          )[0];
-          setTextPost(postContainer.querySelector('span[dir="ltr"]').innerHTML);
-          console.log("start parsing");
-          const listOfComment = listOfPost[i].querySelectorAll("article");
-          // const LINKAUTHOR = listOfPost[i].querySelector("a").href;
+        const listOfPost = scrollContent.querySelectorAll(":scope > div");
+        for (let i = 0; i < listOfPost.length; i++) {
+          if (
+            listOfPost[i] &&
+            listOfPost[i].innerHTML &&
+            listOfPost[i].innerHTML.includes(element.innerHTML.slice(0, 50))
+          ) {
+            let postContainer = listOfPost[i].getElementsByClassName(
+              "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
+            )[0];
+            setTextPost(
+              postContainer.querySelector('span[dir="ltr"]')?.innerHTML
+            );
+            console.log("start parsing");
+            const listOfComment = listOfPost[i].querySelectorAll("article");
+            // const LINKAUTHOR = listOfPost[i].querySelector("a").href;
 
-          console.log(listOfComment);
+            for (let j = 0; j < listOfPost.length - 1; j++) {
+              if (
+                listOfComment[j] &&
+                listOfComment[j].innerHTML &&
+                listOfComment[j].innerHTML.includes(
+                  element.innerHTML.slice(0, 50)
+                )
+              ) {
+                setLinkAuthorComment(listOfComment[j].querySelector("a").href);
+                console.log(
+                  "link to author of comment -",
+                  listOfComment[j].querySelector("a").href
+                );
+                // setCloseUselessTab(false);
 
-          for (let j = 0; j < listOfPost.length - 1; j++) {
-            if (
-              listOfComment[j] &&
-              listOfComment[j].innerHTML &&
-              listOfComment[j].innerHTML.includes(
-                element.innerHTML.slice(0, 50)
-              )
-            ) {
-              setLinkAuthorComment(listOfComment[j].querySelector("a").href);
-              console.log(
-                "link to author of comment -",
-                listOfComment[j].querySelector("a").href
-              );
-              // setCloseUselessTab(false);
-
-              setHoveredElement(true);
-              setElementSizes(element.getBoundingClientRect());
-              setCommentURL(listOfComment[j].querySelector("a").href);
+                setHoveredElement(true);
+                setElementSizes(element.getBoundingClientRect());
+                setCommentURL(listOfComment[j].querySelector("a").href);
+              }
             }
+            // console.log("link to author of post -", LINKAUTHOR);
           }
-          // console.log("link to author of post -", LINKAUTHOR);
         }
       }
     }

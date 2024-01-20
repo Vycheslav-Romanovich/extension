@@ -124,7 +124,7 @@ export const App = () => {
             if (
               listOfComment[j] &&
               listOfComment[j].innerHTML &&
-              listOfComment[j].innerHTML.includes(element.innerText)
+              listOfComment[j].innerHTML.includes(element.innerHTML.slice(0, 50))
             ) {
               console.log(
                 "link to author of comment -",

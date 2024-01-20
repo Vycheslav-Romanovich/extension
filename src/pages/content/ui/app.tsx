@@ -98,7 +98,6 @@ export const App = () => {
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
     if (userData) {
-      console.log("sdfs");
       clipboard
         .writeText(String(JSON.stringify(userData)))
         .then(() => {
@@ -121,15 +120,16 @@ export const App = () => {
           listOfPost[i].innerHTML &&
           listOfPost[i].innerHTML.includes(element.innerHTML.slice(0, 50))
         ) {
-          console.log("start parsing");
-          const listOfComment = listOfPost[i].getElementsByClassName(
-            "comments-comment-item comments-comments-list__comment-item"
-          );
-          // const LINKAUTHOR = listOfPost[i].querySelector("a").href;
           let postContainer = listOfPost[i].getElementsByClassName(
             "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
           )[0];
           setTextPost(postContainer.querySelector('span[dir="ltr"]').innerHTML);
+          console.log("start parsing");
+          const listOfComment = listOfPost[i].querySelectorAll("article");
+          // const LINKAUTHOR = listOfPost[i].querySelector("a").href;
+
+          console.log(listOfComment);
+
           for (let j = 0; j < listOfPost.length - 1; j++) {
             if (
               listOfComment[j] &&
@@ -169,9 +169,12 @@ export const App = () => {
 
   useEffect(() => {
     synth.cancel();
-    documentRef.current.addEventListener("click", onClickElement);
-    documentRef.current.removeEventListener("click", () => {}, false);
-    if (window.location.href.includes("linkedin.com/in/") && extensionEnabled) {
+    if (extensionEnabled) {
+      documentRef.current.addEventListener("click", onClickElement);
+      documentRef.current.removeEventListener("click", () => {}, false);
+    }
+
+    if (window.location.href.includes("linkedin.com/in/")) {
       waitForElementToExist(
         "artdeco-card pv-profile-card break-words mt2",
         getUserData

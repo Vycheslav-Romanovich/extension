@@ -4,7 +4,8 @@ import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
 import { CloseButton, PlayPauseButton, SpeachButton } from "./Buttons";
 
 export const App = () => {
-  const { extensionEnabled, userInfo } = useStorage(extensionStorage);
+  const { extensionEnabled, userInfo, isParsing } =
+    useStorage(extensionStorage);
   const [commentURL, setCommentURL] = useState("");
   const documentRef = useRef(document);
   const [hoveredElement, setHoveredElement] = useState<boolean>(false);
@@ -15,6 +16,7 @@ export const App = () => {
   const [linkAuthorComment, setLinkAuthorComment] = useState("");
   const synth = window.speechSynthesis;
   const clipboard = navigator.clipboard;
+
   useEffect(() => {
     if (
       userInfo &&
@@ -26,23 +28,10 @@ export const App = () => {
         textPost: textPost,
         textComment: textComment,
         linkAuthorComment: linkAuthorComment,
-        userInfo:userInfo,
+        userInfo: userInfo,
       });
     }
-  }, [linkAuthorComment, textPost, textComment, userData]);
-
-  // useEffect(() => {
-  //   if (userData && isCloseUselessTab) {
-  //     clipboard
-  //       .writeText(String(JSON.stringify(userData)))
-  //       .then(() => {
-  //         console.log("Текст скопирован в буфер обмена");
-  //       })
-  //       .catch((err) => {
-  //         console.error("Не удалось скопировать текст в буфер обмена: ", err);
-  //       });
-  //   }
-  // }, [userData, isCloseUselessTab]);
+  }, [linkAuthorComment, textPost, textComment]);
 
   function waitForElementToExist(selector, callback) {
     const element = document.getElementsByClassName(selector);
@@ -94,19 +83,24 @@ export const App = () => {
       skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
       link: window.location.href,
     };
-    // setUserData(lastWord);
+    setUserData(lastWord);
     extensionStorage.setUserInfo(lastWord);
+
     setTimeout(() => {
-      window.close();
+      extensionStorage.setIsParsing(false);
     }, 1000);
+    setTimeout(() => {
+      console.log(userInfo);
+      extensionStorage.setIsParsing(false);
+      window.close();
+    }, 1200);
 
     return lastWord;
   };
 
-  // console.log(userData, isCloseUselessTab);
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
-    if (userData ) {
+    if (userData) {
       console.log("sdfs");
       clipboard
         .writeText(String(JSON.stringify(userData)))
@@ -153,6 +147,7 @@ export const App = () => {
                 listOfComment[j].querySelector("a").href
               );
               // setCloseUselessTab(false);
+
               setHoveredElement(true);
               setElementSizes(element.getBoundingClientRect());
               setCommentURL(listOfComment[j].querySelector("a").href);
@@ -166,6 +161,7 @@ export const App = () => {
 
   const onClickSpeech = (event: React.MouseEvent<HTMLElement>) => {
     setHoveredElement(false);
+    extensionStorage.setIsParsing(true);
     window.open(commentURL, "_blank");
   };
 
@@ -176,10 +172,6 @@ export const App = () => {
 
   useEffect(() => {
     synth.cancel();
-
-    documentRef.current.addEventListener("focus", () => {
-      console.log("asasfafafffffffff");
-    });
     documentRef.current.addEventListener("click", onClickElement);
     documentRef.current.removeEventListener("click", () => {}, false);
     if (window.location.href.includes("linkedin.com/in/") && extensionEnabled) {
@@ -188,7 +180,7 @@ export const App = () => {
         getUserData
       );
     }
-  }, [hoveredElement, extensionEnabled]);
+  }, [hoveredElement, extensionEnabled, isParsing]);
 
   return (
     <>
@@ -210,11 +202,6 @@ export const App = () => {
           <div className="ButtonsContainer">
             <div className="ButtonsBloc">
               <SpeachButton onClickSpeach={onClickSpeech} />
-              {/* <TranslateButton
-                isLoadingTranslate={isLoadingTranslate}
-                onClickTranslate={onClickTranslate}
-              />
-              <SaveButton onClickSave={onClickSave} /> */}
             </div>
           </div>
         </div>

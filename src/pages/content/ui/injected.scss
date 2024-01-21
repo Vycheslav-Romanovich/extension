@@ -1,11 +1,12 @@
-$elang: rgba(79, 110, 253);
-$elangHover: rgb(70, 100, 234);
-$elangActive: rgb(58, 83, 194);
-$elang03: rgba(79, 110, 253, 0.3);
-$elang02: rgba(79, 110, 253, 0.2);
-$elang01: rgba(79, 110, 253, 0.1);
+$elang: #FE6100;;
 
-$elangAccent: rgb(124, 148, 255);
+$elangHover: rgb(254, 97, 0);
+$elangActive: rgb(254, 97, 0);
+$elang03: rgba(254, 97, 0, 0.3);
+$elang02: rgba(254, 97, 0, 0.2);
+$elang01: rgba(254, 97, 0, 0.1);
+
+$elangAccent: rgba(254, 97, 0, 0.3);;
 
 .SelectedContainer {
   background-color: $elang02;
@@ -23,6 +24,10 @@ $elangAccent: rgb(124, 148, 255);
   height: 100%;
   border-radius: 7px;
   border: 1px solid $elang03;
+  
+  span, textarea{
+    font-size: 12px;
+  }
 }
 .textArea{
   width: 90%;
@@ -30,7 +35,7 @@ $elangAccent: rgb(124, 148, 255);
 .ButtonsContainer {
   margin-top: 5px;
   width: 100%;
-
+  gap:10px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -59,9 +64,9 @@ $elangAccent: rgb(124, 148, 255);
   border-radius: 7px;
   background-color: $elang;
   color: #fff;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 500;
-  padding: 5px 10px;
+  padding: 4px 8px;
 
   &:hover {
     background-color: $elangHover;
@@ -83,7 +88,6 @@ $elangAccent: rgb(124, 148, 255);
   border: none;
   padding: 0;
   height: auto;
-  width: 30px;
 
   svg {
     height: 100%;

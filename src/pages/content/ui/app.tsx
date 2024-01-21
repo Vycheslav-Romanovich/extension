@@ -34,12 +34,21 @@ export const App = () => {
   // }, [linkAuthorComment, textPost, textComment, userInfo, isParsing]);
 
   const onShowData = () => {
-    console.log({
+    const data = {
       textPost: textPost,
       textComment: textComment,
       linkAuthorComment: linkAuthorComment,
       userInfo: userInfo,
-    });
+    };
+    console.log(data);
+    clipboard
+      .writeText(String(JSON.stringify(data)))
+      .then(() => {
+        console.log("Текст скопирован в буфер обмена");
+      })
+      .catch((err) => {
+        console.error("Не удалось скопировать текст в буфер обмена: ", err);
+      });
   };
 
   function waitForElementToExist(selector, callback) {
@@ -77,7 +86,9 @@ export const App = () => {
     }
 
     console.log(aboutPure);
-    let exp = experiencePure[0].getElementsByClassName("visually-hidden");
+    let exp = experiencePure[0]
+      ? experiencePure[0].getElementsByClassName("visually-hidden")
+      : [];
     // console.log(experiencePure[0])
     /*
       exp[0] - image company
@@ -119,16 +130,16 @@ export const App = () => {
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
     } else {
-      if (userData) {
-        clipboard
-          .writeText(String(JSON.stringify(userData)))
-          .then(() => {
-            console.log("Текст скопирован в буфер обмена");
-          })
-          .catch((err) => {
-            console.error("Не удалось скопировать текст в буфер обмена: ", err);
-          });
-      }
+      // if (userData) {
+      //   clipboard
+      //     .writeText(String(JSON.stringify(userData)))
+      //     .then(() => {
+      //       console.log("Текст скопирован в буфер обмена");
+      //     })
+      //     .catch((err) => {
+      //       console.error("Не удалось скопировать текст в буфер обмена: ", err);
+      //     });
+      // }
       if (element.tagName === "SPAN" && extensionEnabled) {
         setTextComment(element.innerText);
         const scrollContent = document.getElementsByClassName(
@@ -147,7 +158,10 @@ export const App = () => {
             )[0];
             setTextPost(
               //@ts-ignore
-              postContainer.querySelector('span[dir="ltr"]')?.innerText
+              postContainer
+              //@ts-ignore
+                ? postContainer.querySelector('span[dir="ltr"]')?.innerText
+                : ""
             );
             console.log("start parsing");
             const listOfComment = listOfPost[i].querySelectorAll("article");
@@ -237,7 +251,7 @@ export const App = () => {
             style={{
               position: "absolute",
               width: elementSizes.width,
-              top: elementSizes.top - 5 + window.scrollY,
+              top: elementSizes.top - 45 + window.scrollY,
               left: elementSizes.left + elementSizes.width + 20,
               zIndex: 999,
             }}

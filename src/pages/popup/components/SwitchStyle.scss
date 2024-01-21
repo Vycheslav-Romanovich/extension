@@ -1,10 +1,11 @@
-$elang: rgba(79, 110, 253);
-$elangHover: rgb(70, 100, 234);
-$elangActive: rgb(58, 83, 194);
-$elang03: rgba(79, 110, 253, 0.3);
-$elang02: rgba(79, 110, 253, 0.2);
-$elang01: rgba(79, 110, 253, 0.1);
+$elang: #FE6100;;
 
+$elangHover: rgb(254, 97, 0);
+$elangActive: rgb(254, 97, 0);
+$elang03: rgba(254, 97, 0, 0.3);
+$elang02: rgba(254, 97, 0, 0.2);
+$elang01: rgba(254, 97, 0, 0.1);
+$elangAccent: #FE6100;
 input[type=checkbox] {
   height: 0;
   width: 0;

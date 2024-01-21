@@ -20,10 +20,9 @@ const Popup = () => {
     <div className="App">
       <header className="App-header">
         <div className="LogoContainer">
-          <img src={extIcon} className="App-logo" alt="logo" />
           <div className="LogoTitle">
-            <span className="Title">eLang</span>
-            <span className="Subtitle"> Text to Speach</span>
+            <span className="Title">5sControl</span>
+            <span className="Subtitle"> Is enable LinkdIn extension</span>
           </div>
         </div>
         <Switch isChecked={isExtensionON} toggleSwitch={onToggleExtension} />

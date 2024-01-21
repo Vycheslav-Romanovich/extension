@@ -35,21 +35,17 @@ export const CloseButton = ({ onClickClose }) => {
 export const SpeachButton = ({ onClickSpeach }) => {
   return (
     <button onClick={(event) => onClickSpeach(event)} className="SpeachButton">
-      Copy
+      Copy user info
     </button>
   );
 };
 
-export const PlayPauseButton = ({onShowData}) => {
+export const PlayPauseButton = ({ onShowData }) => {
   return (
     <>
-        <button
-          onClick={(event) => onShowData(event)}
-          className="PlayPauseButton"
-        >
-          <PlaySVG color="#fff" />
-        </button>
-      
+      <button onClick={(event) => onShowData(event)} className="SpeachButton">
+        Gen response
+      </button>
     </>
   );
 };

@@ -45,7 +45,6 @@ export const App = () => {
   function waitForElementToExist(selector, callback) {
     const element = document.getElementsByClassName(selector);
     if (element && element.length > 0) {
-      console.log("ready");
       setTimeout(function () {
         callback(element);
       }, 1000);
@@ -64,13 +63,20 @@ export const App = () => {
       "artdeco-card pv-profile-card break-words mt2"
     );
     let experiencePure;
+    let aboutPure;
     for (let i = 0; i < expirience.length; i++) {
       if (expirience[i].querySelector("#experience")) {
         experiencePure =
           expirience[i].getElementsByClassName("pvs-entity--padded");
       }
+      if (expirience[i].querySelector("#about")) {
+        aboutPure =
+        //@ts-ignore
+          expirience[i].getElementsByClassName("visually-hidden")[1]?.innerText;
+      }
     }
 
+    console.log(aboutPure)
     let exp = experiencePure[0].getElementsByClassName("visually-hidden");
     // console.log(experiencePure[0])
     /*
@@ -82,6 +88,7 @@ export const App = () => {
       exp[5] - about work
       exp[6] - skills
     */
+   
     const lastWord = {
       name: profileOwnersName,
       position: exp[1].textContent,
@@ -92,6 +99,7 @@ export const App = () => {
       skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
       link: window.location.href,
     };
+    console.log(lastWord)
     setUserData(lastWord);
     extensionStorage.setUserInfo(lastWord);
     setTimeout(() => {

@@ -10,28 +10,11 @@ export const App = () => {
   const documentRef = useRef(document);
   const [hoveredElement, setHoveredElement] = useState<boolean>(false);
   const [elementSizes, setElementSizes] = useState<DOMRect | null>(null);
-  const [userData, setUserData] = useState<any>(false);
   const [textComment, setTextComment] = useState("");
   const [textPost, setTextPost] = useState("");
   const [linkAuthorComment, setLinkAuthorComment] = useState("");
   const synth = window.speechSynthesis;
   const clipboard = navigator.clipboard;
-
-  // useEffect(() => {
-  //   if (
-  //     userInfo &&
-  //     linkAuthorComment.length > 0 &&
-  //     textComment.length > 0 &&
-  //     textPost.length > 0
-  //   ) {
-  //     console.log({
-  //       textPost: textPost,
-  //       textComment: textComment,
-  //       linkAuthorComment: linkAuthorComment,
-  //       userInfo: userInfo,
-  //     });
-  //   }
-  // }, [linkAuthorComment, textPost, textComment, userInfo, isParsing]);
 
   const onShowData = () => {
     const data = {
@@ -84,8 +67,6 @@ export const App = () => {
           expirience[i].getElementsByClassName("visually-hidden")[1]?.innerText;
       }
     }
-
-    console.log(aboutPure);
     let exp = experiencePure[0]
       ? experiencePure[0].getElementsByClassName("visually-hidden")
       : [];
@@ -111,8 +92,6 @@ export const App = () => {
       skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
       link: window.location.href,
     };
-    console.log(lastWord);
-    setUserData(lastWord);
     extensionStorage.setUserInfo(lastWord);
     setTimeout(() => {
       extensionStorage.setIsParsing(false);
@@ -120,7 +99,6 @@ export const App = () => {
         window.close();
       }
     }, 1200);
-
     return lastWord;
   };
 
@@ -130,16 +108,6 @@ export const App = () => {
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
     } else {
-      // if (userData) {
-      //   clipboard
-      //     .writeText(String(JSON.stringify(userData)))
-      //     .then(() => {
-      //       console.log("Текст скопирован в буфер обмена");
-      //     })
-      //     .catch((err) => {
-      //       console.error("Не удалось скопировать текст в буфер обмена: ", err);
-      //     });
-      // }
       if (element.tagName === "SPAN" && extensionEnabled) {
         setTextComment(element.innerText);
         const scrollContent = document.getElementsByClassName(

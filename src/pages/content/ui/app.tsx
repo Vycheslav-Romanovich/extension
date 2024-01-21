@@ -71,12 +71,12 @@ export const App = () => {
       }
       if (expirience[i].querySelector("#about")) {
         aboutPure =
-        //@ts-ignore
+          //@ts-ignore
           expirience[i].getElementsByClassName("visually-hidden")[1]?.innerText;
       }
     }
 
-    console.log(aboutPure)
+    console.log(aboutPure);
     let exp = experiencePure[0].getElementsByClassName("visually-hidden");
     // console.log(experiencePure[0])
     /*
@@ -88,9 +88,10 @@ export const App = () => {
       exp[5] - about work
       exp[6] - skills
     */
-   
+
     const lastWord = {
       name: profileOwnersName,
+      aboutAuthor: aboutPure,
       position: exp[1].textContent,
       company: exp[2]?.textContent,
       expirience: exp[3]?.textContent,
@@ -99,7 +100,7 @@ export const App = () => {
       skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
       link: window.location.href,
     };
-    console.log(lastWord)
+    console.log(lastWord);
     setUserData(lastWord);
     extensionStorage.setUserInfo(lastWord);
     setTimeout(() => {
@@ -145,7 +146,8 @@ export const App = () => {
               "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
             )[0];
             setTextPost(
-              postContainer.querySelector('span[dir="ltr"]')?.innerHTML
+              //@ts-ignore
+              postContainer.querySelector('span[dir="ltr"]')?.innerText
             );
             console.log("start parsing");
             const listOfComment = listOfPost[i].querySelectorAll("article");
@@ -234,18 +236,37 @@ export const App = () => {
           <div
             style={{
               position: "absolute",
-              
+              width: elementSizes.width,
               top: elementSizes.top - 5 + window.scrollY,
               left: elementSizes.left + elementSizes.width + 20,
-              pointerEvents: "none",
               zIndex: 999,
             }}
           >
             <div className="SelectedContainerText">
-              <span>{textPost}</span>
-              <span>{textComment}</span>
-              <span>{linkAuthorComment}</span>
-              userInfo: userInfo,
+              <div>
+                <textarea
+                  className="textArea"
+                  value={textPost}
+                  onChange={(e) => setTextPost(e.target.value)} // Обработка изменений в тексте
+                  rows={5} // Начальное количество строк
+                  style={{ resize: "vertical" }}
+                ></textarea>
+                <textarea
+                  className="textArea"
+                  value={textComment}
+                  onChange={(e) => setTextComment(e.target.value)} // Обработка изменений в тексте
+                  rows={5} // Начальное количество строк
+                  style={{ resize: "vertical" }}
+                ></textarea>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span>AUTHOR INFO</span>
+                  {/* <span>link: {linkAuthorComment}</span> */}
+                  <span>name: {userInfo.name}</span>
+                  <span>about: {userInfo.aboutAuthor}</span>
+                  <span>position: {userInfo.position}</span>
+                  <span>company: {userInfo.company}</span>
+                </div>
+              </div>
             </div>
           </div>
         </>

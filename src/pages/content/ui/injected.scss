@@ -16,11 +16,16 @@ $elangAccent: rgb(124, 148, 255);
   border: 1px solid $elang03;
 }
 .SelectedContainerText{
+  pointer-events: 'auto';
   background-color: #FFFFFF;
+  min-width: 400px;
   width: 100%;
   height: 100%;
   border-radius: 7px;
   border: 1px solid $elang03;
+}
+.textArea{
+  width: 90%;
 }
 .ButtonsContainer {
   margin-top: 5px;

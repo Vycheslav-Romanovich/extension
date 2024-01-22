@@ -32,19 +32,19 @@ export const CloseButton = ({ onClickClose }) => {
   );
 };
 
-export const SpeachButton = ({ onClickSpeach }) => {
+export const CopyButton = ({ onClickCopy }) => {
   return (
-    <button onClick={(event) => onClickSpeach(event)} className="SpeachButton">
-      Copy user info
+    <button onClick={(event) => onClickCopy(event)} className="ButtonCopy">
+      Copy info
     </button>
   );
 };
 
-export const PlayPauseButton = ({ onShowData }) => {
+export const GenerateButton = ({ onShowData }) => {
   return (
     <>
-      <button onClick={(event) => onShowData(event)} className="SpeachButton">
-        Gen response
+      <button onClick={(event) => onShowData(event)} className="ButtonGenerate">
+        Generate reply
       </button>
     </>
   );

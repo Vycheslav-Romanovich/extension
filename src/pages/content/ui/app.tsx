@@ -1,20 +1,33 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import useStorage from "@root/src/shared/hooks/useStorage";
 import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
-import { CloseButton, PlayPauseButton, SpeachButton } from "./Buttons";
+import { CloseButton, GenerateButton, CopyButton } from "./Buttons";
 
 export const App = () => {
   const { extensionEnabled, userInfo, isParsing } =
     useStorage(extensionStorage);
   const [commentURL, setCommentURL] = useState("");
   const documentRef = useRef(document);
+  const [isButtonSeeTranslate, setIsButtonSeeTranslate] = useState<boolean>(false);
   const [hoveredElement, setHoveredElement] = useState<boolean>(false);
   const [elementSizes, setElementSizes] = useState<DOMRect | null>(null);
+  const [elementSizesWidth, setElementSizesWidth] = useState<DOMRect | null>(null);
   const [textComment, setTextComment] = useState("");
   const [textPost, setTextPost] = useState("");
+  const [textPosition, setTextPosition] = useState("");
   const [linkAuthorComment, setLinkAuthorComment] = useState("");
-  const synth = window.speechSynthesis;
   const clipboard = navigator.clipboard;
+  const clearUserInfo = {
+    name: '',
+    aboutAuthor: '',
+    position: '',
+    company: '',
+    expirience: '',
+    about: '',
+    place: '',
+    skills: '',
+    link: '',
+  };
 
   const onShowData = () => {
     const data = {
@@ -70,7 +83,7 @@ export const App = () => {
     let exp = experiencePure[0]
       ? experiencePure[0].getElementsByClassName("visually-hidden")
       : [];
-    // console.log(experiencePure[0])
+    // console.log(exp[1].textContent)
     /*
       exp[0] - image company
       exp[1] - position
@@ -80,7 +93,7 @@ export const App = () => {
       exp[5] - about work
       exp[6] - skills
     */
-
+    
     const lastWord = {
       name: profileOwnersName,
       aboutAuthor: aboutPure,
@@ -103,11 +116,14 @@ export const App = () => {
   };
 
   const onClickElement = useCallback((event: any) => {
+    setIsButtonSeeTranslate(false);
     const element = event.target as HTMLElement;
     const ariaHiddenValue = element.getAttribute("aria-hidden");
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
     } else {
+      console.log(element);
+      
       if (element.tagName === "SPAN" && extensionEnabled) {
         setTextComment(element.innerText);
         const scrollContent = document.getElementsByClassName(
@@ -131,7 +147,8 @@ export const App = () => {
                 ? postContainer.querySelector('span[dir="ltr"]')?.innerText
                 : ""
             );
-            console.log("start parsing");
+
+            // console.log("start parsing");
             const listOfComment = listOfPost[i].querySelectorAll("article");
             // const LINKAUTHOR = listOfPost[i].querySelector("a").href;
 
@@ -143,14 +160,30 @@ export const App = () => {
                   element.innerHTML.slice(0, 50)
                 )
               ) {
+                if(listOfComment[j].querySelector("button").classList.contains("see-more")) {
+                  listOfComment[j].querySelector("button").click();
+                }
+                if(listOfComment[j].querySelector("button").classList.contains("comments-see-translation-button__text")){
+                  setIsButtonSeeTranslate(true);
+                }
+                
+                if(listOfComment[0].querySelector("div").getElementsByClassName("comments-post-meta__profile-info-wrapper display-flex")) {
+                  const sizeElement = listOfComment[0].querySelector("div").getElementsByClassName("comments-post-meta__profile-info-wrapper display-flex")[0].getBoundingClientRect();
+                  setElementSizesWidth(sizeElement);
+                }
+                else {
+                  setElementSizesWidth(element.getBoundingClientRect());
+                }
+                
                 setLinkAuthorComment(listOfComment[j].querySelector("a").href);
-                console.log(
-                  "link to author of comment -",
-                  listOfComment[j].querySelector("a").href
-                );
+                // console.log(
+                //   "link to author of comment -",
+                //   listOfComment[j].querySelector("a").href
+                // );
                 // setCloseUselessTab(false);
-
+                
                 setHoveredElement(true);
+                
                 setElementSizes(element.getBoundingClientRect());
                 setCommentURL(listOfComment[j].querySelector("a").href);
               }
@@ -162,7 +195,7 @@ export const App = () => {
     }
   }, []);
 
-  const onClickSpeech = (event: React.MouseEvent<HTMLElement>) => {
+  const onClickCopy = (event: React.MouseEvent<HTMLElement>) => {
     // setHoveredElement(false);
     extensionStorage.setIsParsing(true);
     window.open(commentURL, "_blank");
@@ -171,10 +204,12 @@ export const App = () => {
   const onClickClose = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setHoveredElement(false);
+    setIsButtonSeeTranslate(false);
+    setLinkAuthorComment('');
+    extensionStorage.setUserInfo(clearUserInfo);
   };
 
   useEffect(() => {
-    synth.cancel();
     if (extensionEnabled) {
       documentRef.current.addEventListener("click", onClickElement);
       documentRef.current.removeEventListener("click", () => {}, false);
@@ -186,6 +221,8 @@ export const App = () => {
         getUserData
       );
     }
+    setTextPosition(userInfo.position);
+    
   }, [hoveredElement, extensionEnabled, isParsing]);
 
   return (
@@ -195,60 +232,63 @@ export const App = () => {
           <div
             style={{
               position: "absolute",
-              width: elementSizes.width + 10,
-              height: elementSizes.height + 10,
-              top: elementSizes.top - 5 + window.scrollY,
-              left: elementSizes.left - 5,
+              width: elementSizesWidth.width,
+              height: elementSizes.height + 70 + (isButtonSeeTranslate ? 20 : -2),
+              top: elementSizes.top - 55 + window.scrollY,
+              left: elementSizesWidth.left,
               pointerEvents: "none",
               zIndex: 999,
             }}
           >
             <div className="SelectedContainer">
-              <CloseButton onClickClose={onClickClose} />
             </div>
             <div className="ButtonsContainer">
-              <div className="ButtonsBloc">
-                <SpeachButton onClickSpeach={onClickSpeech} />
-              </div>
-              <div className="ButtonsBloc">
-                <PlayPauseButton onShowData={onShowData} />
-              </div>
+                <CopyButton onClickCopy={onClickCopy} />
             </div>
           </div>
           <div
             style={{
               position: "absolute",
-              width: elementSizes.width,
-              top: elementSizes.top - 45 + window.scrollY,
-              left: elementSizes.left + elementSizes.width + 20,
+              width: 365,
+              height: 560,
+              top: elementSizes.top - 300 + window.scrollY,
+              left: elementSizesWidth.left + elementSizesWidth.width + 15,
               zIndex: 999,
             }}
           >
             <div className="SelectedContainerText">
-              <div>
-                <textarea
-                  className="textArea"
-                  value={textPost}
-                  onChange={(e) => setTextPost(e.target.value)} // Обработка изменений в тексте
-                  rows={5} // Начальное количество строк
-                  style={{ resize: "vertical" }}
-                ></textarea>
-                <textarea
-                  className="textArea"
-                  value={textComment}
-                  onChange={(e) => setTextComment(e.target.value)} // Обработка изменений в тексте
-                  rows={5} // Начальное количество строк
-                  style={{ resize: "vertical" }}
-                ></textarea>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <span>AUTHOR INFO</span>
-                  {/* <span>link: {linkAuthorComment}</span> */}
-                  <span>name: {userInfo.name}</span>
-                  <span>about: {userInfo.aboutAuthor}</span>
-                  <span>position: {userInfo.position}</span>
-                  <span>company: {userInfo.company}</span>
+              <div className="header"> <h3 className="headerLabel">Write reply to</h3> <CloseButton onClickClose={onClickClose} /></div>
+              <div className="main">
+                <div className="containerTextArea">
+                  <label className="labelTextArea">Post text</label>
+                  <textarea
+                    className="textArea"
+                    value={textPost}
+                    onChange={(e) => setTextPost(e.target.value)} // Обработка изменений в тексте
+                    rows={5} // Начальное количество строк
+                  ></textarea>
+                </div>
+                <div className="containerTextArea">
+                  <label className="labelTextArea">Commentary text</label>
+                  <textarea
+                    className="textArea"
+                    value={textComment}
+                    onChange={(e) => setTextComment(e.target.value)} // Обработка изменений в тексте
+                    rows={5} // Начальное количество строк
+                    ></textarea>
+                </div>
+                <div className="containerTextArea">
+                  <label className="labelTextArea">Additional info</label>
+                  <textarea
+                    className="textArea"
+                    value={textPosition}
+                    placeholder="Will be copied from commentator page"
+                    onChange={(e) => setTextPosition(e.target.value)} // Обработка изменений в тексте
+                    rows={5} // Начальное количество строк
+                    ></textarea>
                 </div>
               </div>
+                <GenerateButton onShowData={onShowData} />
             </div>
           </div>
         </>

@@ -20,3 +20,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   return true;
 });
+
+if (chrome.runtime.setUninstallURL) {
+  chrome.storage.sync.clear()
+  chrome.storage.local.clear()
+}

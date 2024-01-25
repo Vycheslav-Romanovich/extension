@@ -6,7 +6,7 @@ import packageJson from "./package.json" assert { type: "json" };
  */
 const manifest = {
   manifest_version: 3,
-  name: "Elang: Speach extension",
+  name: "5sControl: LinkidIn",
   version: packageJson.version,
   description: packageJson.description,
   permissions: [

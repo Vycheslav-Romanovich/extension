@@ -2,20 +2,25 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import useStorage from "@root/src/shared/hooks/useStorage";
 import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
 import { CloseButton, GenerateButton, CopyButton } from "./Buttons";
+import { MessageCopy } from "./Message";
+import { generateComment, sendAnalytics } from "../../api/axios";
 
 export const App = () => {
-  const { extensionEnabled, userInfo, isParsing } =
+  const { extensionEnabled, userInfo, isParsing, userWork } =
     useStorage(extensionStorage);
   const [commentURL, setCommentURL] = useState("");
   const documentRef = useRef(document);
+  const [isShowMessageCopy, setIsShowMessageCopy] = useState<boolean>(false);
+  const [isLoader, setIsLoader] = useState<boolean>(false);
   const [isButtonSeeTranslate, setIsButtonSeeTranslate] = useState<boolean>(false);
   const [hoveredElement, setHoveredElement] = useState<boolean>(false);
   const [elementSizes, setElementSizes] = useState<DOMRect | null>(null);
   const [elementSizesWidth, setElementSizesWidth] = useState<DOMRect | null>(null);
   const [textComment, setTextComment] = useState("");
   const [textPost, setTextPost] = useState("");
-  const [textPosition, setTextPosition] = useState("");
+  const [textPosition, setTextPosition] = useState(userInfo.aboutAuthor);
   const [linkAuthorComment, setLinkAuthorComment] = useState("");
+  
   const clipboard = navigator.clipboard;
   const clearUserInfo = {
     name: '',
@@ -24,27 +29,41 @@ export const App = () => {
     company: '',
     expirience: '',
     about: '',
-    place: '',
-    skills: '',
     link: '',
   };
 
-  const onShowData = () => {
-    const data = {
-      textPost: textPost,
-      textComment: textComment,
-      linkAuthorComment: linkAuthorComment,
-      userInfo: userInfo,
-    };
-    console.log(data);
+  const onShowData  = async () => {
+    setIsLoader(true);
+
+    const data = await generateComment(textPost,textComment)
+    .then((res) => {return res.data})
+    .catch((e) => console.log(e.err));
+
     clipboard
       .writeText(String(JSON.stringify(data)))
       .then(() => {
         console.log("Текст скопирован в буфер обмена");
+        setIsLoader(false);
+        setIsShowMessageCopy(true);
       })
       .catch((err) => {
         console.error("Не удалось скопировать текст в буфер обмена: ", err);
       });
+
+      const saveDataForEvent = {
+        generateCommentText: JSON.stringify(data),
+        textPost: textPost,
+        userInfo: userInfo,
+        textComment: textComment,
+        linkAuthorComment: linkAuthorComment,
+      };
+      chrome.storage.sync.set({ dataForSendEvent: saveDataForEvent});
+
+      setTimeout(()=>{
+        setIsShowMessageCopy(false);
+        setHoveredElement(false);
+        extensionStorage.setUserInfo(clearUserInfo);
+      },1500);
   };
 
   function waitForElementToExist(selector, callback) {
@@ -67,6 +86,8 @@ export const App = () => {
     let expirience = document.getElementsByClassName(
       "artdeco-card pv-profile-card break-words mt2"
     );
+    //@ts-ignore
+    const aboutUser = document.getElementsByClassName("text-body-medium break-words")[0]?.innerText ?? '';
     let experiencePure;
     let aboutPure;
     for (let i = 0; i < expirience.length; i++) {
@@ -80,8 +101,11 @@ export const App = () => {
           expirience[i].getElementsByClassName("visually-hidden")[1]?.innerText;
       }
     }
-    let exp = experiencePure[0]
+
+    let exp = experiencePure != undefined ?
+      experiencePure[0]
       ? experiencePure[0].getElementsByClassName("visually-hidden")
+      : [] 
       : [];
     // console.log(exp[1].textContent)
     /*
@@ -96,13 +120,13 @@ export const App = () => {
     
     const lastWord = {
       name: profileOwnersName,
-      aboutAuthor: aboutPure,
-      position: exp[1].textContent,
-      company: exp[2]?.textContent,
-      expirience: exp[3]?.textContent,
-      about: exp[4]?.textContent,
-      place: exp[5]?.textContent,
-      skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
+      aboutAuthor: aboutUser,
+      position: exp[1]?.textContent ?? '',
+      company: exp[2]?.textContent ?? '',
+      expirience: exp[3]?.textContent ?? '',
+      about: exp[4]?.textContent ?? '',
+      // place: exp[5]?.textContent,
+      // skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
       link: window.location.href,
     };
     extensionStorage.setUserInfo(lastWord);
@@ -118,28 +142,44 @@ export const App = () => {
   const onClickElement = useCallback((event: any) => {
     setIsButtonSeeTranslate(false);
     const element = event.target as HTMLElement;
+    if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
+      chrome.storage.sync.get(['dataForSendEvent'], (result) => {
+        sendAnalytics(result.dataForSendEvent.generateCommentText, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
+        .then((res) => {return res})
+        .catch((e) => console.log(e.err))
+        .finally(()=>setHoveredElement(false));
+      })
+    }
     const ariaHiddenValue = element.getAttribute("aria-hidden");
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
     } else {
-      console.log(element);
+      // console.log(element); 
       
       if (element.tagName === "SPAN" && extensionEnabled) {
         setTextComment(element.innerText);
+
         const scrollContent = document.getElementsByClassName(
           "scaffold-finite-scroll__content"
+        )[0] != undefined ?  document.getElementsByClassName(
+          "scaffold-finite-scroll__content"
+        )[0]: document.getElementsByClassName(
+          "fixed-full"
         )[0];
 
         const listOfPost = scrollContent.querySelectorAll(":scope > div");
+
         for (let i = 0; i < listOfPost.length; i++) {
           if (
             listOfPost[i] &&
             listOfPost[i].innerHTML &&
             listOfPost[i].innerHTML.includes(element.innerHTML.slice(0, 50))
           ) {
+
             let postContainer = listOfPost[i].getElementsByClassName(
               "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
             )[0];
+
             setTextPost(
               //@ts-ignore
               postContainer
@@ -152,7 +192,7 @@ export const App = () => {
             const listOfComment = listOfPost[i].querySelectorAll("article");
             // const LINKAUTHOR = listOfPost[i].querySelector("a").href;
 
-            for (let j = 0; j < listOfPost.length - 1; j++) {
+            for (let j = 0; j < listOfComment.length; j++) {
               if (
                 listOfComment[j] &&
                 listOfComment[j].innerHTML &&
@@ -166,15 +206,14 @@ export const App = () => {
                 if(listOfComment[j].querySelector("button").classList.contains("comments-see-translation-button__text")){
                   setIsButtonSeeTranslate(true);
                 }
-                
-                if(listOfComment[0].querySelector("div").getElementsByClassName("comments-post-meta__profile-info-wrapper display-flex")) {
-                  const sizeElement = listOfComment[0].querySelector("div").getElementsByClassName("comments-post-meta__profile-info-wrapper display-flex")[0].getBoundingClientRect();
+
+                if(listOfComment[j].querySelector("div").getElementsByClassName("comments-post-meta__profile-info-wrapper display-flex").length != 0) {
+                  const sizeElement = listOfComment[j].querySelector("div").getElementsByClassName("comments-post-meta__profile-info-wrapper display-flex")[0].getBoundingClientRect();
                   setElementSizesWidth(sizeElement);
                 }
                 else {
                   setElementSizesWidth(element.getBoundingClientRect());
                 }
-                
                 setLinkAuthorComment(listOfComment[j].querySelector("a").href);
                 // console.log(
                 //   "link to author of comment -",
@@ -206,7 +245,6 @@ export const App = () => {
     setHoveredElement(false);
     setIsButtonSeeTranslate(false);
     setLinkAuthorComment('');
-    extensionStorage.setUserInfo(clearUserInfo);
   };
 
   useEffect(() => {
@@ -214,16 +252,18 @@ export const App = () => {
       documentRef.current.addEventListener("click", onClickElement);
       documentRef.current.removeEventListener("click", () => {}, false);
     }
-
     if (window.location.href.includes("linkedin.com/in/")) {
       waitForElementToExist(
         "artdeco-card pv-profile-card break-words mt2",
         getUserData
       );
     }
-    setTextPosition(userInfo.position);
-    
   }, [hoveredElement, extensionEnabled, isParsing]);
+
+  useEffect(() => {
+    setTextPosition(userInfo.aboutAuthor);
+  },[userInfo.aboutAuthor]);
+
 
   return (
     <>
@@ -288,9 +328,18 @@ export const App = () => {
                     ></textarea>
                 </div>
               </div>
-                <GenerateButton onShowData={onShowData} />
+                <GenerateButton onShowData={onShowData} isLoader={isLoader}/>
             </div>
           </div>
+          {isShowMessageCopy && 
+          <div style={{
+              position: "fixed",
+              bottom: "2%",
+              left: "43%",
+              zIndex: 999,
+            }}>
+              <MessageCopy />
+          </div>}
         </>
       )}
     </>

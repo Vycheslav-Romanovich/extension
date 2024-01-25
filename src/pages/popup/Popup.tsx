@@ -8,13 +8,19 @@ import withErrorBoundary from "@src/shared/hoc/withErrorBoundary";
 import { Switch } from "./components/Switch";
 
 const Popup = () => {
-  const { extensionEnabled } = useStorage(extensionStorage);
+  const { extensionEnabled, userWork } = useStorage(extensionStorage);
   const [isExtensionON, toggleExtension] = useState<boolean>(extensionEnabled);
+  const [textProject, setTextProject] = useState<string>(userWork.projectId);
+  const [textLink, setTextLink] = useState<string>(userWork.link);
 
   const onToggleExtension = () => {
     toggleExtension(!isExtensionON);
     extensionStorage.toggleExtension(!isExtensionON);
   };
+
+  const onClickSave = () => {
+    extensionStorage.setUserWork({projectId: textProject, link: textLink })
+  }
 
   return (
     <div className="App">
@@ -27,6 +33,26 @@ const Popup = () => {
         </div>
         <Switch isChecked={isExtensionON} toggleSwitch={onToggleExtension} />
       </header>
+      {isExtensionON && <section className="SectionData">
+        <div>
+          <p>Project Id</p>
+          <input type="text" 
+          onChange={(e)=> setTextProject(e.target.value)} 
+          value={textProject} /> 
+        </div>
+
+        <div>
+          <p>Link Page LinkedIn</p>
+          <input type="text"  
+          onChange={(e)=> setTextLink(e.target.value)} 
+          value={textLink} />
+        </div>
+        <button 
+          onClick={onClickSave}
+          className="SaveButton">
+          Save
+        </button>
+      </section>}
     </div>
   );
 };

@@ -134,10 +134,7 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
 
 .ButtonGenerate {
   cursor: pointer;
-  background: none;
   border: none;
-  padding: 0;
-  height: auto;
   display: flex;
   width: 332px;
   height: 44px;
@@ -157,6 +154,33 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   font-weight: 600;
   line-height: normal;
 }
+
+.ButtonGenerate:disabled,
+.ButtonGenerate[disabled]{
+  cursor: default;
+  background: linear-gradient(0deg, rgba(254, 97, 0, 0.40) 0%, rgba(254, 97, 0, 0.40) 100%), #FFF;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.Loader {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+  } 
 
 .CloseButton {
   pointer-events: all;
@@ -192,6 +216,26 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   //     fill: $elangActive;
   //   }
   // }
+}
+
+.MessageCopy{
+  cursor: default;
+  border: none;
+  display: inline-flex;
+  padding: 13px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 34px;
+  background: $elang;
+
+  color: #FFF;
+  text-align: center;
+  font-family: $fontIter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }
 
 .TranslateButton {

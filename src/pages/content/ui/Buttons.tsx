@@ -40,10 +40,12 @@ export const CopyButton = ({ onClickCopy }) => {
   );
 };
 
-export const GenerateButton = ({ onShowData }) => {
+export const GenerateButton = ({ onShowData, isLoader }) => {
   return (
     <>
-      <button onClick={(event) => onShowData(event)} className="ButtonGenerate">
+      
+      <button disabled={isLoader} onClick={(event) => onShowData(event)} className="ButtonGenerate">
+        {isLoader && <span className="Loader"></span>}
         Generate reply
       </button>
     </>

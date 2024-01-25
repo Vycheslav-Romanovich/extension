@@ -1,7 +1,7 @@
 {
   "name": "5s-extension",
-  "version": "0.0.1",
-  "description": "Learning languages with any article on the web & play with AI to memorize  words",
+  "version": "1.0.0",
+  "description": "LinkidIn help extension",
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "build:firefox": "tsc --noEmit && cross-env __FIREFOX__=true vite build",

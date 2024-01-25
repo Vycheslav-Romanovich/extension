@@ -130,6 +130,14 @@ export const App = () => {
       link: window.location.href,
     };
     extensionStorage.setUserInfo(lastWord);
+    const saveDataForEvent = {
+      generateCommentText: '',
+      textPost: textPost,
+      userInfo: userInfo,
+      textComment: textComment,
+      linkAuthorComment: linkAuthorComment,
+    };
+    chrome.storage.sync.set({ dataForSendEvent: saveDataForEvent});
     setTimeout(() => {
       extensionStorage.setIsParsing(false);
       if (isParsing) {
@@ -144,12 +152,17 @@ export const App = () => {
     const element = event.target as HTMLElement;
     if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
       chrome.storage.sync.get(['dataForSendEvent'], (result) => {
-        sendAnalytics(result.dataForSendEvent.generateCommentText, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
-        .then((res) => {return res})
-        .catch((e) => console.log(e.err))
-        .finally(()=>setHoveredElement(false));
+        if(Object.keys(result).length) {
+          sendAnalytics(result.dataForSendEvent.generateCommentText, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
+          .then((res) => {return res})
+          .catch((e) => console.log(e.err))
+          .finally(() => {
+            setHoveredElement(false);
+          });
+       }
       })
     }
+    else {
     const ariaHiddenValue = element.getAttribute("aria-hidden");
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
@@ -232,6 +245,7 @@ export const App = () => {
         }
       }
     }
+   }
   }, []);
 
   const onClickCopy = (event: React.MouseEvent<HTMLElement>) => {

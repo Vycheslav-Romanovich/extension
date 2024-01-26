@@ -167,9 +167,9 @@ export const App = () => {
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
     } else {
-      // console.log(element); 
+      console.log(element); 
       
-      if (element.tagName === "SPAN" && extensionEnabled) {
+      if (element.tagName === "SPAN" && extensionEnabled && element.className !== "button-content-container display-flex align-items-center") {
         setTextComment(element.innerText);
 
         const scrollContent = document.getElementsByClassName(

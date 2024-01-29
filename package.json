@@ -1,6 +1,6 @@
 {
   "name": "5s-extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "LinkidIn help extension",
   "scripts": {
     "build": "tsc --noEmit && vite build",

@@ -20,6 +20,7 @@ export const App = () => {
   const [textPost, setTextPost] = useState("");
   const [textPosition, setTextPosition] = useState(userInfo.aboutAuthor);
   const [linkAuthorComment, setLinkAuthorComment] = useState("");
+  const [positionTop, setPositionTop] = useState<number>();
   
   const clipboard = navigator.clipboard;
   const clearUserInfo = {
@@ -152,6 +153,7 @@ export const App = () => {
     const element = event.target as HTMLElement;
     if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
       chrome.storage.sync.get(['dataForSendEvent'], (result) => {
+        console.log('result', result);
         if(Object.keys(result).length) {
           sendAnalytics(result.dataForSendEvent.generateCommentText, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
           .then((res) => {return res})
@@ -167,7 +169,7 @@ export const App = () => {
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
     } else {
-      console.log(element); 
+      // console.log(element); 
       
       if (element.tagName === "SPAN" && extensionEnabled && element.className !== "button-content-container display-flex align-items-center") {
         setTextComment(element.innerText);
@@ -233,11 +235,13 @@ export const App = () => {
                 //   listOfComment[j].querySelector("a").href
                 // );
                 // setCloseUselessTab(false);
-                
+                extensionStorage.setUserInfo(clearUserInfo);
+
                 setHoveredElement(true);
                 
                 setElementSizes(element.getBoundingClientRect());
                 setCommentURL(listOfComment[j].querySelector("a").href);
+                setPositionTop(element.getBoundingClientRect()?.top - 55 + window.scrollY);
               }
             }
             // console.log("link to author of post -", LINKAUTHOR);
@@ -278,7 +282,6 @@ export const App = () => {
     setTextPosition(userInfo.aboutAuthor);
   },[userInfo.aboutAuthor]);
 
-
   return (
     <>
       {hoveredElement && extensionEnabled && (
@@ -288,7 +291,7 @@ export const App = () => {
               position: "absolute",
               width: elementSizesWidth.width,
               height: elementSizes.height + 70 + (isButtonSeeTranslate ? 20 : -2),
-              top: elementSizes.top - 55 + window.scrollY,
+              top: positionTop,
               left: elementSizesWidth.left,
               pointerEvents: "none",
               zIndex: 999,
@@ -305,7 +308,7 @@ export const App = () => {
               position: "absolute",
               width: 365,
               height: 560,
-              top: elementSizes.top - 300 + window.scrollY,
+              top: positionTop - 245,
               left: elementSizesWidth.left + elementSizesWidth.width + 15,
               zIndex: 999,
             }}

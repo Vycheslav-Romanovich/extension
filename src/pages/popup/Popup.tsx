@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import extIcon from "@assets/ext_icon.png";
 import "@pages/popup/Popup.scss";
 import useStorage from "@src/shared/hooks/useStorage";
@@ -19,8 +19,18 @@ const Popup = () => {
   };
 
   const onClickSave = () => {
-    extensionStorage.setUserWork({projectId: textProject, link: textLink })
+    extensionStorage.setUserWork({projectId: textProject, link: textLink });
+    // chrome.storage.sync.set({ dataUserWork: {projectId: textProject, link: textLink }});
   }
+
+  // useEffect(() => { 
+  //   chrome.storage.sync.get(['dataUserWork'], (result) => {
+  //     if(Object.keys(result).length) {
+  //       setTextProject(result.dataUserWork.projectId);
+  //       setTextLink(result.dataUserWork.textLink);
+  //     }
+  //   });
+  // },[])
 
   return (
     <div className="App">

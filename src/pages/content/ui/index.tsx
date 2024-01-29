@@ -6,7 +6,7 @@ import injectedStyle from "./injected.scss?inline";
 refreshOnUpdate("pages/content");
 
 const root = document.createElement("div");
-root.id = "elang_speach_extension";
+root.id = "elang_linkidin_extension";
 
 // document.body.append(root);
 document.body.insertBefore(root, document.body.childNodes[0]);

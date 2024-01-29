@@ -10,6 +10,7 @@ const manifest = {
   version: packageJson.version,
   description: packageJson.description,
   permissions: [
+    // "offscreen",
     "storage",
     "sidePanel",
     "scripting",

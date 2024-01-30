@@ -9,6 +9,7 @@ $elang02: rgba(254, 97, 0, 0.2);
 $elang01: rgba(254, 97, 0, 0.1);
 $elangBlack01: #212121;
 $elangGrey01: #E0E0E0;
+$elangGrey02: #666;
 
 $elangAccent: rgba(254, 97, 0, 0.3);;
 
@@ -47,17 +48,6 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-}
-
-.headerLabel{ 
-  margin: 0;
-  color: $elangBlack01;
-  font-family: $fontIter;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
 }
 
 .main{
@@ -128,10 +118,6 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   z-index: 1000;
 }
 
-// .SpeachButton:hover {
-//   background-color: $elangHover;
-// }
-
 .ButtonGenerate {
   cursor: pointer;
   border: none;
@@ -188,34 +174,6 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   background: none;
   border: none;
   padding: 0;
-  // height: 22px;
-  // position: absolute;
-  // right: -13px;
-  // top: -13px;
-  // box-shadow: -1px 5px 10px 3px $elang03;
-  // border-radius: 100%;
-  // background-color: $elang;
-
-  // &:hover {
-  //   background-color: $elangHover;
-  // }
-
-  // &:active {
-  //   background-color: $elangActive;
-  // }
-
-  // svg {
-  //   fill: $elang;
-  //   scale: 1;
-
-  //   &:hover {
-  //     fill: $elangHover;
-  //   }
-
-  //   &:active {
-  //     fill: $elangActive;
-  //   }
-  // }
 }
 
 .MessageCopy{
@@ -242,7 +200,6 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   cursor: pointer;
   background: none;
   border: none;
-  // padding: 0;
   height: 30px;
   width: 30px;
   background-color: $elang;
@@ -269,7 +226,6 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   cursor: pointer;
   background: none;
   border: none;
-  // padding: 0;
   height: 30px;
   width: 30px;
   background-color: $elang;
@@ -316,4 +272,104 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   100% {
     transform: rotate(360deg);
   }
+}
+
+ul.nav {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  gap: 16px;
+}
+ 
+ul.nav li {
+  list-style: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.7s;
+  color: $elangGrey02;
+  font-family: $fontIter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; 
+  letter-spacing: 0.1px;
+}
+ 
+ul.nav li:first-child {
+  border-bottom-left-radius: 2rem;
+  border-top-left-radius: 2rem;
+}
+ 
+ul.nav li:last-child {
+  border-bottom-right-radius: 2rem;
+  border-top-right-radius: 2rem;
+}
+ 
+ul.nav li:hover {
+  text-decoration-line: underline;
+}
+ 
+ul.nav li.active {
+  cursor: default;
+  color: $elang;
+  text-decoration-line: underline;
+}
+
+.btnReset {
+  border: none;
+  background-color: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: $fontIter;
+  cursor: pointer;
+  display: inline-block;
+  color: $elangGrey02;
+  &:hover {
+    color: $elang;
+  }
+}
+
+.container {
+  position: relative;
+  display: flex;
+}
+
+.tooltip {
+  position: absolute;
+  min-width: 280px;
+  margin-left: calc(100%);
+  display: inline-flex;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  background: #FFF;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.30);
+  color: $elangGrey02;
+  font-family: $fontIter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.textAreaPromt{
+  width: 314px;
+  height: 387px;
+  display: flex;
+  padding: 12px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  resize: none;
+  border-radius: 12px;
+  border: 1px solid  $elangGrey01;
+  font-family: $fontIter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
 }

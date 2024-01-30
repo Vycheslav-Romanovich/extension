@@ -28,13 +28,14 @@ export const sendAnalytics = (generatedcomment: string, link: string,
     return data
   }
 
-  export const generateComment = (textPost: string, textComment?: string ) => {
+  export const generateComment = (textPost: string, textComment?: string, prompt?: string ) => {
     const data = axios
       .post(
         `https://pleasant-bluejay-next.ngrok-free.app/api/aiExtension/generateComment`,
         {
           textPost: textPost,
-          textComment: textComment
+          textComment: textComment,
+          prompt: prompt
         },
         {
           headers: {

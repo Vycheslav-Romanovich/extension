@@ -4,9 +4,12 @@ import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
 import { CloseButton, GenerateButton, CopyButton } from "./Buttons";
 import { MessageCopy } from "./Message";
 import { generateComment, sendAnalytics } from "../../api/axios";
+import FirstTab from "./components/firstTab";
+import SecondTab from "./components/secondTab";
+import { textPromtReset } from "@root/src/constants/textsPromt";
 
 export const App = () => {
-  const { extensionEnabled, userInfo, isParsing, userWork } =
+  const { extensionEnabled, userInfo, isParsing, userWork, textPromt } =
     useStorage(extensionStorage);
   const [commentURL, setCommentURL] = useState("");
   const documentRef = useRef(document);
@@ -21,6 +24,8 @@ export const App = () => {
   const [textPosition, setTextPosition] = useState(userInfo.aboutAuthor);
   const [linkAuthorComment, setLinkAuthorComment] = useState("");
   const [positionTop, setPositionTop] = useState<number>();
+  const [activeTab, setActiveTab] = useState("tab1");
+  const [textPromtState, setTextPromtState] = useState(textPromt);
   
   const clipboard = navigator.clipboard;
   const clearUserInfo = {
@@ -36,7 +41,7 @@ export const App = () => {
   const onShowData  = async () => {
     setIsLoader(true);
 
-    const data = await generateComment(textPost,textComment)
+    const data = await generateComment(textPost,textComment, textPromtState)
     .then((res) => {return res.data})
     .catch((e) => console.log(e.err));
 
@@ -153,7 +158,6 @@ export const App = () => {
     const element = event.target as HTMLElement;
     if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
       chrome.storage.sync.get(['dataForSendEvent'], (result) => {
-        console.log('result', result);
         if(Object.keys(result).length) {
           sendAnalytics(result.dataForSendEvent.generateCommentText, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
           .then((res) => {return res})
@@ -238,7 +242,8 @@ export const App = () => {
                 extensionStorage.setUserInfo(clearUserInfo);
 
                 setHoveredElement(true);
-                
+                setActiveTab("tab1");
+
                 setElementSizes(element.getBoundingClientRect());
                 setCommentURL(listOfComment[j].querySelector("a").href);
                 setPositionTop(element.getBoundingClientRect()?.top - 55 + window.scrollY);
@@ -263,7 +268,25 @@ export const App = () => {
     setHoveredElement(false);
     setIsButtonSeeTranslate(false);
     setLinkAuthorComment('');
+    setActiveTab("tab1");
   };
+
+  const handleTab1 = () => {
+    setActiveTab("tab1");
+  };
+  const handleTab2 = () => {
+    setActiveTab("tab2");
+  };
+
+  const onClickResetPromt = () => {
+    setTextPromtState(textPromtReset);
+    extensionStorage.setTextPromt(textPromtReset);
+  };
+
+  const setTextPromt =(e:string) => {
+    setTextPromtState(e);
+    extensionStorage.setTextPromt(e);
+  }
 
   useEffect(() => {
     if (extensionEnabled) {
@@ -314,37 +337,36 @@ export const App = () => {
             }}
           >
             <div className="SelectedContainerText">
-              <div className="header"> <h3 className="headerLabel">Write reply to</h3> <CloseButton onClickClose={onClickClose} /></div>
-              <div className="main">
-                <div className="containerTextArea">
-                  <label className="labelTextArea">Post text</label>
-                  <textarea
-                    className="textArea"
-                    value={textPost}
-                    onChange={(e) => setTextPost(e.target.value)} // Обработка изменений в тексте
-                    rows={5} // Начальное количество строк
-                  ></textarea>
-                </div>
-                <div className="containerTextArea">
-                  <label className="labelTextArea">Commentary text</label>
-                  <textarea
-                    className="textArea"
-                    value={textComment}
-                    onChange={(e) => setTextComment(e.target.value)} // Обработка изменений в тексте
-                    rows={5} // Начальное количество строк
-                    ></textarea>
-                </div>
-                <div className="containerTextArea">
-                  <label className="labelTextArea">Additional info</label>
-                  <textarea
-                    className="textArea"
-                    value={textPosition}
-                    placeholder="Will be copied from commentator page"
-                    onChange={(e) => setTextPosition(e.target.value)} // Обработка изменений в тексте
-                    rows={5} // Начальное количество строк
-                    ></textarea>
-                </div>
-              </div>
+              <div className="header">
+              <ul className="nav">
+                <li
+                  className={activeTab === "tab1" ? "active" : ""}
+                  onClick={handleTab1}
+                >
+                  Gathered info
+                </li>
+                <li
+                  className={activeTab === "tab2" ? "active" : ""}
+                  onClick={handleTab2}
+                >
+                  Used prompt
+                </li>
+            </ul>
+              <CloseButton onClickClose={onClickClose} /></div>
+                {activeTab === "tab1" ?
+                  <FirstTab 
+                  textPost={textPost}
+                  textComment={textComment}
+                  textPosition={textPosition}
+                  setTextPost={setTextPost}
+                  setTextComment={setTextComment}
+                  setTextPosition={setTextPosition}
+                /> :
+                <SecondTab 
+                  textPromt={textPromtState}
+                  setTextPromt={setTextPromt}
+                  onClickReset={onClickResetPromt}
+                />}
                 <GenerateButton onShowData={onShowData} isLoader={isLoader}/>
             </div>
           </div>

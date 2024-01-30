@@ -1,7 +1,7 @@
 {
   "name": "5s-extension",
-  "version": "1.0.1",
-  "description": "LinkidIn help extension",
+  "version": "1.0.2",
+  "description": "Save time and elevate your engagement using the innovative 5sControl EXTENSION - ChatGPT LinkedIn Chrome Extension.",
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "build:firefox": "tsc --noEmit && cross-env __FIREFOX__=true vite build",

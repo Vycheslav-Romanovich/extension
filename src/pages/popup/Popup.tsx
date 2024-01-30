@@ -52,7 +52,7 @@ const Popup = () => {
         </div>
 
         <div>
-          <p>Link Page LinkedIn</p>
+          <p>Full name</p>
           <input type="text"  
           onChange={(e)=> setTextLink(e.target.value)} 
           value={textLink} />

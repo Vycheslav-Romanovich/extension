@@ -13,8 +13,8 @@ const SecondTab: React.FC<PropsType>  = ({textPromt, setTextPromt, onClickReset}
     <div className="main">
                 <div className="containerTextArea">
                   <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, marginBottom: 4}}>
-                  <div style={{ display: 'flex', flexDirection: 'row', gap: '4px'}}>
-                    <label className="labelTextArea">Prompt</label>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '4px', alignItems: 'center'}}>
+                    <label className="labelTextAreaSecond">Prompt</label>
                     <ToolTipComponent text="To place gathered information inside your prompt write [Post], [Commentary] or [Author].">
                       <InfoSVG />
                     </ToolTipComponent> 

@@ -30,7 +30,6 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   pointer-events: 'auto';
   background-color: #FFF;
   filter: drop-shadow(0px 5px 1.3px rgba(0, 0, 0, 0.25)) drop-shadow(0px -1px 4px rgba(0, 0, 0, 0.25));
-  height: 100%;
   border-radius: 7px;
 }
 .SelectedContainerText:after {
@@ -55,6 +54,7 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   flex-direction: column;
   justify-content: flex-start;
   gap: 24px;
+  margin-top: 10px;
 }
 
 .labelTextArea{
@@ -94,37 +94,26 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   line-height: 18px;
 }
 
-.ButtonsContainer {
-  margin-top: -10px;
-  width: 97%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
 .ButtonCopy {
   cursor: pointer;
-  pointer-events: all;
   border: none;
-
-  display: inline-flex;
-  height: 44px;
-  padding: 13px 12px;
-  justify-content: center;
-  align-items: center;
-
-  color: #FFF;
+  background: none;
+  margin: 0;
+  padding-bottom: 4px;
+  color: $elang;
   text-align: center;
   font-family: $fontIter;
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   line-height: normal;
+}
 
-  border-radius: 34px;
-  background: $elang;
-  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
-  z-index: 1000;
+.ContainerLabelButton{
+ display: flex;
+ flex-direction: row;
+ justify-content: space-between;
+ align-items: center;
 }
 
 .ButtonGenerate {
@@ -195,6 +184,27 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   gap: 10px;
   border-radius: 34px;
   background: $elang;
+
+  color: #FFF;
+  text-align: center;
+  font-family: $fontIter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.MessageCopyParsing{
+  cursor: default;
+  border: none;
+  display: inline-flex;
+  padding: 13px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 34px;
+  background: $elang;
+  min-width: 330px;
 
   color: #FFF;
   text-align: center;
@@ -367,7 +377,7 @@ ul.nav li.active {
 
 .textAreaPromt{
   width: 314px;
-  height: 387px;
+  height: 390px;
   display: flex;
   padding: 12px 8px;
   justify-content: center;

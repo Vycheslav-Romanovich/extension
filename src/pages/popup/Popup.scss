@@ -7,15 +7,17 @@ $elangActive: rgb(254, 97, 0);
 $elang03: rgba(254, 97, 0, 0.3);
 $elang02: rgba(254, 97, 0, 0.2);
 $elang01: rgba(254, 97, 0, 0.1);
-$elangAccent: rgba(254, 97, 0, 0.3);;
+$elangAccent: rgba(254, 97, 0, 0.3);
 
+.App{
+  padding: 16px;
+}
 
 .App-header {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
 }
 
 .App-logo {
@@ -31,19 +33,19 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   .LogoTitle {
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
 
     .Title {
-      font-size: 26px;
-      font-weight: 700;
       color: $elang;
+      font-size: 24px;
+      font-family: $fontIter;
+      font-weight: 600;
+      line-height: 32px; 
+      letter-spacing: 0.1px;
+      span{
+        font-style: italic;
+      }
     }
 
-    .Subtitle {
-      font-size: 18px;
-      font-weight: 400;
-      color: $elang;
-    }
   }
 
 }
@@ -51,28 +53,44 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
 .SectionData {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px 10px;
+  gap: 24px;
+  margin-top: 24px;
 
   div{
     display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
+    width: 332px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
 
     p{ 
+      color: #212121;
       font-family: $fontIter;
-      font-size: 16px;
-      width: 70px;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+      padding-bottom: 4px;
+      margin: 0;
     }
 
     input{
       font-family: $fontIter;
+      color: #212121;
       font-size: 14px;
-      padding-block: 0;
-      padding-inline: 0;
-      width: 280px;
-      height: 30px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px; /* 128.571% */
+
+      display: flex;
+      padding: 12px 8px;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex: 1 0 0;
+      align-self: stretch;
+      border-radius: 12px;
+      border: 1px solid #E0E0E0;
     }
   }
 }
@@ -81,12 +99,13 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   cursor: pointer;
   pointer-events: all;
   border: none;
-
+  width: 100%;
   display: inline-flex;
   height: 44px;
   padding: 13px 12px;
   justify-content: center;
   align-items: center;
+  gap: 10px;
 
   color: #FFF;
   text-align: center;
@@ -100,3 +119,36 @@ $elangAccent: rgba(254, 97, 0, 0.3);;
   background: $elang;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
 }
+
+.TextVisible{
+  color:  #9E9E9E;
+  font-family: $fontIter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 21px */
+  padding-left: 4px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  margin: 0;
+}
+
+.Loader {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+  } 

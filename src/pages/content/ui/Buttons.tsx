@@ -1,6 +1,4 @@
 import { CloseSVG } from "@root/src/assets/svg/CloseSVG";
-import { PauseSVG } from "@root/src/assets/svg/PauseSVG";
-import { PlaySVG } from "@root/src/assets/svg/PlaySVG";
 import { SaveSVG } from "@root/src/assets/svg/SaveSVG";
 import { TranslateSVG } from "@root/src/assets/svg/TranslateSVG";
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import extIcon from "@assets/ext_icon.png";
 import "@pages/popup/Popup.scss";
 import useStorage from "@src/shared/hooks/useStorage";
 import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
@@ -12,6 +11,7 @@ const Popup = () => {
   const [isExtensionON, toggleExtension] = useState<boolean>(extensionEnabled);
   const [textProject, setTextProject] = useState<string>(userWork.projectId);
   const [textLink, setTextLink] = useState<string>(userWork.link);
+  const [isLoader, setIsLoader] = useState<boolean>(false);
 
   const onToggleExtension = () => {
     toggleExtension(!isExtensionON);
@@ -19,7 +19,11 @@ const Popup = () => {
   };
 
   const onClickSave = () => {
+    setIsLoader(true);
     extensionStorage.setUserWork({projectId: textProject, link: textLink });
+    setTimeout(() => {
+      setIsLoader(false);
+    }, 500);
     // chrome.storage.sync.set({ dataUserWork: {projectId: textProject, link: textLink }});
   }
 
@@ -37,32 +41,38 @@ const Popup = () => {
       <header className="App-header">
         <div className="LogoContainer">
           <div className="LogoTitle">
-            <span className="Title">5sControl</span>
-            <span className="Subtitle"> Is enable LinkdIn extension</span>
+            <span className="Title"><span>5S</span>Control</span>
           </div>
         </div>
         <Switch isChecked={isExtensionON} toggleSwitch={onToggleExtension} />
       </header>
-      {isExtensionON && <section className="SectionData">
+      {isExtensionON && <>
+        <section className="SectionData">
         <div>
-          <p>Project Id</p>
+          <p>Project</p>
           <input type="text" 
+          placeholder="Project name"
           onChange={(e)=> setTextProject(e.target.value)} 
           value={textProject} /> 
         </div>
 
         <div>
-          <p>Full name</p>
+          <p>Your name</p>
           <input type="text"  
+          placeholder="Full name"
           onChange={(e)=> setTextLink(e.target.value)} 
           value={textLink} />
         </div>
+        </section>
+        <p className="TextVisible">This info will be visible to your supervisor.</p>
         <button 
           onClick={onClickSave}
           className="SaveButton">
+            {isLoader && <span className="Loader"></span>}
           Save
         </button>
-      </section>}
+        </>
+      }
     </div>
   );
 };

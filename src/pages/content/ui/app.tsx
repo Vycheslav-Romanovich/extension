@@ -7,6 +7,7 @@ import { generateComment, sendAnalytics } from "../../api/axios";
 import FirstTab from "./components/firstTab";
 import SecondTab from "./components/secondTab";
 import { textPromtReset } from "@root/src/constants/textsPromt";
+import { MessageParsing } from "./components/MessageParsing";
 
 export const App = () => {
   const { extensionEnabled, userInfo, isParsing, userWork, textPromt } =
@@ -44,11 +45,11 @@ export const App = () => {
     const data = await generateComment(textPost,textComment, textPromtState)
     .then((res) => {return res.data})
     .catch((e) => console.log(e.err));
-
+    
     clipboard
-      .writeText(String(JSON.stringify(data)))
+      .writeText(String(data))
       .then(() => {
-        console.log("Текст скопирован в буфер обмена");
+        // console.log("Текст скопирован в буфер обмена");
         setIsLoader(false);
         setIsShowMessageCopy(true);
       })
@@ -57,7 +58,7 @@ export const App = () => {
       });
 
       const saveDataForEvent = {
-        generateCommentText: JSON.stringify(data),
+        generateCommentText: String(data),
         textPost: textPost,
         userInfo: userInfo,
         textComment: textComment,
@@ -127,12 +128,10 @@ export const App = () => {
     const lastWord = {
       name: profileOwnersName,
       aboutAuthor: aboutUser,
-      position: exp[1]?.textContent ?? '',
-      company: exp[2]?.textContent ?? '',
-      expirience: exp[3]?.textContent ?? '',
+      position: aboutUser,
+      company: exp[1]?.textContent ?? '',
+      expirience: exp[2]?.textContent ?? '',
       about: exp[4]?.textContent ?? '',
-      // place: exp[5]?.textContent,
-      // skills: exp[6] ? exp[6].textContent : exp[5]?.textContent,
       link: window.location.href,
     };
     extensionStorage.setUserInfo(lastWord);
@@ -154,7 +153,6 @@ export const App = () => {
   };
 
   const onClickElement = useCallback((event: any) => {
-    setIsButtonSeeTranslate(false);
     const element = event.target as HTMLElement;
     if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
       chrome.storage.sync.get(['dataForSendEvent'], (result) => {
@@ -174,7 +172,6 @@ export const App = () => {
       console.log("its not a comment");
     } else {
       // console.log(element); 
-      
       if (element.tagName === "SPAN" && extensionEnabled && element.className !== "button-content-container display-flex align-items-center") {
         setTextComment(element.innerText);
 
@@ -224,6 +221,8 @@ export const App = () => {
                 }
                 if(listOfComment[j].querySelector("button").classList.contains("comments-see-translation-button__text")){
                   setIsButtonSeeTranslate(true);
+                } else{ 
+                  setIsButtonSeeTranslate(false);
                 }
 
                 if(listOfComment[j].querySelector("div").getElementsByClassName("comments-post-meta__profile-info-wrapper display-flex").length != 0) {
@@ -303,7 +302,11 @@ export const App = () => {
 
   useEffect(() => {
     setTextPosition(userInfo.aboutAuthor);
+    console.log('isButtonSeeTranslate', isButtonSeeTranslate);
   },[userInfo.aboutAuthor]);
+  
+  
+  
 
   return (
     <>
@@ -321,9 +324,6 @@ export const App = () => {
             }}
           >
             <div className="SelectedContainer">
-            </div>
-            <div className="ButtonsContainer">
-                <CopyButton onClickCopy={onClickCopy} />
             </div>
           </div>
           <div
@@ -361,6 +361,7 @@ export const App = () => {
                   setTextPost={setTextPost}
                   setTextComment={setTextComment}
                   setTextPosition={setTextPosition}
+                  onClickCopy={onClickCopy}
                 /> :
                 <SecondTab 
                   textPromt={textPromtState}
@@ -381,6 +382,15 @@ export const App = () => {
           </div>}
         </>
       )}
+      {isParsing && 
+        <div style={{
+              position: "fixed",
+              bottom: "3%",
+              left: "38%",
+              zIndex: 999,
+        }}>
+            <MessageParsing />
+        </div>}
     </>
   );
 };

@@ -1,6 +1,6 @@
 {
   "name": "5s-extension",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Save time and elevate your engagement using the innovative 5sControl EXTENSION - ChatGPT LinkedIn Chrome Extension.",
   "scripts": {
     "build": "tsc --noEmit && vite build",

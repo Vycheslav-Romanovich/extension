@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import useStorage from "@root/src/shared/hooks/useStorage";
 import { extensionStorage } from "@root/src/shared/storages/extensionStorage";
-import { CloseButton, GenerateButton, CopyButton } from "./Buttons";
+import { CloseButton, GenerateButton } from "./Buttons";
 import { MessageCopy } from "./Message";
 import { generateComment, sendAnalytics } from "../../api/axios";
 import FirstTab from "./components/firstTab";
@@ -49,7 +49,7 @@ export const App = () => {
     clipboard
       .writeText(String(data))
       .then(() => {
-        // console.log("Текст скопирован в буфер обмена");
+        console.log("Текст скопирован в буфер обмена");
         setIsLoader(false);
         setIsShowMessageCopy(true);
       })
@@ -136,7 +136,7 @@ export const App = () => {
     };
     extensionStorage.setUserInfo(lastWord);
     const saveDataForEvent = {
-      generateCommentText: '',
+      generateCommentText: null,
       textPost: textPost,
       userInfo: userInfo,
       textComment: textComment,
@@ -192,7 +192,6 @@ export const App = () => {
         scrollContent = document.getElementsByClassName('search-results-container')[0];
         }
         let listOfPost;
-        console.log('scrollContent', scrollContent);
         
         if(scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= null || scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= undefined){
         const listOfPostUser = scrollContent.querySelector("ul").querySelectorAll(":scope > li");       
@@ -207,8 +206,7 @@ export const App = () => {
           }
         }
       } else {
-         listOfPost = scrollContent.querySelectorAll(":scope > div");
-         console.log('listOfPost', listOfPost[0]);       
+         listOfPost = scrollContent.querySelectorAll(":scope > div");       
       }
         for (let i = 0; i < listOfPost.length; i++) {
 
@@ -230,7 +228,7 @@ export const App = () => {
                 : ""
             );
 
-            // console.log("start parsing");
+            console.log("start parsing");
             const listOfComment = listOfPost[i].querySelectorAll("article");
             // const LINKAUTHOR = listOfPost[i].querySelector("a").href;
 

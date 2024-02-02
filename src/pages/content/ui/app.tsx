@@ -180,34 +180,56 @@ export const App = () => {
       // console.log(element); 
       if (element.tagName === "SPAN" && extensionEnabled && element.className !== "button-content-container display-flex align-items-center") {
         setTextComment(element.innerText);
-        let scrollContent = document.getElementsByClassName(
-          "scaffold-finite-scroll__content"
-        )[0] != undefined ?  document.getElementsByClassName(
-          "scaffold-finite-scroll__content"
-        )[0]: document.getElementsByClassName(
-          "fixed-full"
-        )[0];
-
-        if (scrollContent === undefined || scrollContent === null){
-        scrollContent = document.getElementsByClassName('search-results-container')[0];
-        }
-        let listOfPost;
+        // let scrollContent = document.getElementsByClassName(
+        //   "scaffold-finite-scroll__content"
+        // )[0] != undefined ?  document.getElementsByClassName(
+        //   "scaffold-finite-scroll__content"
+        // )[0]: document.getElementsByClassName(
+        //   "fixed-full"
+        // )[0];
+        //   console.log('scrollContent', scrollContent);
+          const parsingPostElement = element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+          const listOfPost = parsingPostElement.querySelectorAll(":scope > div");
+        // if (scrollContent === undefined || scrollContent === null){
+        // scrollContent = document.getElementsByClassName('search-results-container')[0];
+        // }
         
-        if(scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= null || scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= undefined){
-        const listOfPostUser = scrollContent.querySelector("ul").querySelectorAll(":scope > li");       
-        for(let i = 0; i < listOfPostUser.length; i++)
-        {
-          if (
-            listOfPostUser[i] &&
-            listOfPostUser[i].innerHTML &&
-            listOfPostUser[i].innerHTML.includes(element.innerHTML.slice(0, 50))
-          ) {
-            listOfPost = listOfPostUser[i].querySelectorAll(":scope > div");
-          }
-        }
-      } else {
-         listOfPost = scrollContent.querySelectorAll(":scope > div");       
-      }
+        
+      //   if(scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= null || scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= undefined){
+      //   const listOfPostUser = scrollContent.querySelector("ul").querySelectorAll(":scope > li");     
+      //   console.log('1', listOfPostUser);  
+      //   for(let i = 0; i < listOfPostUser.length; i++)
+      //   {
+      //     if (
+      //       listOfPostUser[i] &&
+      //       listOfPostUser[i].innerHTML &&
+      //       listOfPostUser[i].innerHTML.includes(element.innerHTML.slice(0, 50))
+      //     ) {
+      //       listOfPost = listOfPostUser[i].querySelectorAll(":scope > div");
+      //     }
+      //   }
+      // } else {
+      //    listOfPost = scrollContent.querySelectorAll(":scope > div");       
+      // }
+      // console.log('listOfPost', listOfPost);
+      //   if(listOfPost === undefined){
+      //     const listOfPostUser = scrollContent.lastElementChild.querySelector("ul").querySelectorAll(":scope > li");
+      //     console.log('2', listOfPostUser);
+             
+      //     for(let i = 0; i < listOfPostUser.length; i++)
+      //   {
+      //     if (
+      //       listOfPostUser[i] &&
+      //       listOfPostUser[i].innerHTML &&
+      //       listOfPostUser[i].innerHTML.includes(element.innerHTML.slice(0, 50))
+      //     ) {
+      //       listOfPost = listOfPostUser[i].querySelectorAll(":scope > div");
+      //     }
+      //   }
+      //   }
+      //   console.log('listOfPost', listOfPost);
+        
+        console.log('TEST',listOfPost);
         for (let i = 0; i < listOfPost.length; i++) {
 
           if (
@@ -215,7 +237,8 @@ export const App = () => {
             listOfPost[i].innerHTML &&
             listOfPost[i].innerHTML.includes(element.innerHTML.slice(0, 50))
           ) {
-
+            console.log('listOfPost[i]', listOfPost[i]);
+            
             let postContainer = listOfPost[i].getElementsByClassName(
               "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
             )[0];
@@ -265,7 +288,8 @@ export const App = () => {
                 // setCloseUselessTab(false);
                 
                 const setUserInfoDataClick = {
-                  name: listOfComment[j].getElementsByClassName('comments-post-meta__name-text hoverable-link-text mr1')[0].querySelector('span[dir="ltr"]').querySelector('span')?.innerText ?? null,
+                  name: listOfComment[j].getElementsByClassName('comments-post-meta__name-text hoverable-link-text mr1')[0]?.querySelector('span[dir="ltr"]')?.querySelector('span')?.innerText ?? null,
+                  //@ts-ignore
                   aboutAuthor: listOfComment[j].getElementsByClassName('comments-post-meta__headline t-12 t-normal t-black--light')[0]?.innerText ?? null,
                   position: null,
                   company: null,

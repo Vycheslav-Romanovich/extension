@@ -12,6 +12,7 @@ export const sendAnalytics = (generatedComment: string, link: string,
           projectId: projectId,
           textPost: textPost,
           textComment: textComment,
+          linkAuthorComment: linkAuthorComment,
           userInfo: userInfo,
         },
         {

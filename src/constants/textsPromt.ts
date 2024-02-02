@@ -1,1 +1,1 @@
-export const textPromtReset:string = "Write something in answer to “[Commentary]” left under a “[Post]” On linked in. The author that commented is [Author]";
+export const textPromtReset:string = "";

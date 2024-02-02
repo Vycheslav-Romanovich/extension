@@ -30,13 +30,13 @@ export const App = () => {
   
   const clipboard = navigator.clipboard;
   const clearUserInfo = {
-    name: '',
-    aboutAuthor: '',
-    position: '',
-    company: '',
-    expirience: '',
-    about: '',
-    link: '',
+    name: null,
+    aboutAuthor: null,
+    position: null,
+    company: null,
+    experience: null,
+    about: null,
+    link: null,
   };
 
   const onShowData  = async () => {
@@ -129,9 +129,9 @@ export const App = () => {
       name: profileOwnersName,
       aboutAuthor: aboutUser,
       position: aboutUser,
-      company: exp[1]?.textContent ?? '',
-      expirience: exp[2]?.textContent ?? '',
-      about: exp[4]?.textContent ?? '',
+      company: exp[1]?.textContent ?? null,
+      experience: exp[2]?.textContent ?? null,
+      about: exp[4]?.textContent ?? null,
       link: window.location.href,
     };
     extensionStorage.setUserInfo(lastWord);
@@ -154,6 +154,11 @@ export const App = () => {
 
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
+    console.log(element);
+    
+    if(element.parentNode.parentElement.matches('a')){
+      onClickClose();
+    }else{
     if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
       chrome.storage.sync.get(['dataForSendEvent'], (result) => {
         if(Object.keys(result).length) {
@@ -166,16 +171,16 @@ export const App = () => {
        }
       })
     }
-    else {
+    else {    
     const ariaHiddenValue = element.getAttribute("aria-hidden");
     if (ariaHiddenValue === "true") {
       console.log("its not a comment");
+      onClickClose();
     } else {
       // console.log(element); 
       if (element.tagName === "SPAN" && extensionEnabled && element.className !== "button-content-container display-flex align-items-center") {
         setTextComment(element.innerText);
-
-        const scrollContent = document.getElementsByClassName(
+        let scrollContent = document.getElementsByClassName(
           "scaffold-finite-scroll__content"
         )[0] != undefined ?  document.getElementsByClassName(
           "scaffold-finite-scroll__content"
@@ -183,9 +188,30 @@ export const App = () => {
           "fixed-full"
         )[0];
 
-        const listOfPost = scrollContent.querySelectorAll(":scope > div");
-
+        if (scrollContent === undefined || scrollContent === null){
+        scrollContent = document.getElementsByClassName('search-results-container')[0];
+        }
+        let listOfPost;
+        console.log('scrollContent', scrollContent);
+        
+        if(scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= null || scrollContent.querySelector("ul").querySelector("li").querySelector('div')!= undefined){
+        const listOfPostUser = scrollContent.querySelector("ul").querySelectorAll(":scope > li");       
+        for(let i = 0; i < listOfPostUser.length; i++)
+        {
+          if (
+            listOfPostUser[i] &&
+            listOfPostUser[i].innerHTML &&
+            listOfPostUser[i].innerHTML.includes(element.innerHTML.slice(0, 50))
+          ) {
+            listOfPost = listOfPostUser[i].querySelectorAll(":scope > div");
+          }
+        }
+      } else {
+         listOfPost = scrollContent.querySelectorAll(":scope > div");
+         console.log('listOfPost', listOfPost[0]);       
+      }
         for (let i = 0; i < listOfPost.length; i++) {
+
           if (
             listOfPost[i] &&
             listOfPost[i].innerHTML &&
@@ -233,12 +259,23 @@ export const App = () => {
                   setElementSizesWidth(element.getBoundingClientRect());
                 }
                 setLinkAuthorComment(listOfComment[j].querySelector("a").href);
+                
                 // console.log(
                 //   "link to author of comment -",
                 //   listOfComment[j].querySelector("a").href
                 // );
                 // setCloseUselessTab(false);
-                extensionStorage.setUserInfo(clearUserInfo);
+                
+                const setUserInfoDataClick = {
+                  name: listOfComment[j].getElementsByClassName('comments-post-meta__name-text hoverable-link-text mr1')[0].querySelector('span[dir="ltr"]').querySelector('span')?.innerText ?? null,
+                  aboutAuthor: listOfComment[j].getElementsByClassName('comments-post-meta__headline t-12 t-normal t-black--light')[0]?.innerText ?? null,
+                  position: null,
+                  company: null,
+                  experience: null,
+                  about: null,
+                  link: listOfComment[j].querySelector("a").href,
+                };
+                extensionStorage.setUserInfo(setUserInfoDataClick);
 
                 setHoveredElement(true);
                 setActiveTab("tab1");
@@ -254,6 +291,7 @@ export const App = () => {
       }
     }
    }
+  }
   }, []);
 
   const onClickCopy = (event: React.MouseEvent<HTMLElement>) => {
@@ -262,8 +300,8 @@ export const App = () => {
     window.open(commentURL, "_blank");
   };
 
-  const onClickClose = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
+  const onClickClose = (event?: React.MouseEvent<HTMLElement>) => {
+    event?.stopPropagation();
     setHoveredElement(false);
     setIsButtonSeeTranslate(false);
     setLinkAuthorComment('');
@@ -292,7 +330,7 @@ export const App = () => {
       documentRef.current.addEventListener("click", onClickElement);
       documentRef.current.removeEventListener("click", () => {}, false);
     }
-    if (window.location.href.includes("linkedin.com/in/")) {
+    if (window.location.href.includes("linkedin.com/in/") && isParsing) {
       waitForElementToExist(
         "artdeco-card pv-profile-card break-words mt2",
         getUserData
@@ -302,7 +340,6 @@ export const App = () => {
 
   useEffect(() => {
     setTextPosition(userInfo.aboutAuthor);
-    console.log('isButtonSeeTranslate', isButtonSeeTranslate);
   },[userInfo.aboutAuthor]);
   
   

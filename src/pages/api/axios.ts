@@ -2,7 +2,7 @@ import axios from 'axios'
 import { IUserInfo } from '@root/src/constants/types'
 
 export const sendAnalytics = (generatedComment: string, link: string,
-    projectId: string, textPost: string, userInfo: IUserInfo, textComment?: string, linkAuthorComment?: string ) => {
+    projectId: string, textPost: string, userInfo: IUserInfo, textComment?: string, linkAuthorComment?: string, postLink?: string ) => {
     const data = axios
       .post(
         `https://pleasant-bluejay-next.ngrok-free.app/api/aiExtension/sendEvent`,
@@ -14,6 +14,7 @@ export const sendAnalytics = (generatedComment: string, link: string,
           textComment: textComment,
           linkAuthorComment: linkAuthorComment,
           userInfo: userInfo,
+          postLink: postLink
         },
         {
           headers: {

@@ -10,7 +10,7 @@ import { textPromtReset } from "@root/src/constants/textsPromt";
 import { MessageParsing } from "./components/MessageParsing";
 
 export const App = () => {
-  const { extensionEnabled, userInfo, isParsing, userWork, textPromt } =
+  const { extensionEnabled, userInfo, isParsing, userWork, textPromt, postLink } =
     useStorage(extensionStorage);
   const [commentURL, setCommentURL] = useState("");
   const documentRef = useRef(document);
@@ -30,13 +30,13 @@ export const App = () => {
   
   const clipboard = navigator.clipboard;
   const clearUserInfo = {
-    name: null,
-    aboutAuthor: null,
-    position: null,
-    company: null,
-    experience: null,
-    about: null,
-    link: null,
+    name: '-',
+    aboutAuthor: '-',
+    position: '-',
+    company: '-',
+    experience: '-',
+    about: '-',
+    link: '-',
   };
 
   const onShowData  = async () => {
@@ -129,14 +129,14 @@ export const App = () => {
       name: profileOwnersName,
       aboutAuthor: aboutUser,
       position: aboutUser,
-      company: exp[1]?.textContent ?? null,
-      experience: exp[2]?.textContent ?? null,
-      about: exp[4]?.textContent ?? null,
+      company: exp[1]?.textContent ?? '-',
+      experience: exp[2]?.textContent ?? '-',
+      about: exp[4]?.textContent ?? '-',
       link: window.location.href,
     };
     extensionStorage.setUserInfo(lastWord);
     const saveDataForEvent = {
-      generateCommentText: null,
+      generateCommentText: '-',
       textPost: textPost,
       userInfo: userInfo,
       textComment: textComment,
@@ -154,23 +154,39 @@ export const App = () => {
 
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
-    console.log(element);   
+    console.log(element); 
+
+    //set LinkPost
+    if(element.parentElement.parentElement.parentElement.getElementsByClassName('social-details-social-counts__item social-details-social-counts__comments social-details-social-counts__item--right-aligned')?.length >= 1){
+      const dataUrn = element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement?.getAttribute('data-urn');
+      const linkPost = dataUrn ? `https://www.linkedin.com/feed/update/${dataUrn}` : '-';
+      extensionStorage.setPostLink(linkPost);  
+    };
+    
+    //set LinkPost
+    if(element.className === 'artdeco-button__text' && element.parentElement.getAttribute('aria-label') === 'Comment'){
+      const dataUrn = element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.getAttribute('data-urn');
+      const linkPost = dataUrn ? `https://www.linkedin.com/feed/update/${dataUrn}` : '-';  
+      extensionStorage.setPostLink(linkPost);  
+    };
+
     if(element.parentNode.parentElement.matches('a')){
       onClickClose();
-    }else{
+    } else{
     if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
       //@ts-ignore
-      const textCommentedUserExt = element.parentElement.parentElement.parentElement.getElementsByClassName('ql-editor')[0]?.innerText ?? null;
+      const textCommentedUserExt = element.parentElement.parentElement.parentElement.getElementsByClassName('ql-editor')[0]?.innerText ?? '-';
+      
       chrome.storage.sync.get(['dataForSendEvent'], (result) => {
         if(Object.keys(result).length) {
-          sendAnalytics(textCommentedUserExt, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
+          sendAnalytics(textCommentedUserExt, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment, postLink)
           .then((res) => {return res})
           .catch((e) => console.log(e.err))
           .finally(() => {
             setHoveredElement(false);
           });
        }
-      })
+      });
     }
     else {    
     const ariaHiddenValue = element.getAttribute("aria-hidden");
@@ -239,7 +255,11 @@ export const App = () => {
             listOfPost[i].innerHTML.includes(element.innerHTML.slice(0, 50))
           ) {
             console.log('listOfPost[i]', listOfPost[i]);
-            
+            //set LinkPost
+            const dataId = listOfPost[i].getAttribute('data-id');
+            const linkPost = dataId ? `https://www.linkedin.com/feed/update/${dataId}` : '-';
+            extensionStorage.setPostLink(linkPost);  
+
             let postContainer = listOfPost[i].getElementsByClassName(
               "feed-shared-inline-show-more-text feed-shared-update-v2__description feed-shared-inline-show-more-text--minimal-padding"
             )[0];
@@ -289,13 +309,13 @@ export const App = () => {
                 // setCloseUselessTab(false);
                 
                 const setUserInfoDataClick = {
-                  name: listOfComment[j].getElementsByClassName('comments-post-meta__name-text hoverable-link-text mr1')[0]?.querySelector('span[dir="ltr"]')?.querySelector('span')?.innerText ?? null,
+                  name: listOfComment[j].getElementsByClassName('comments-post-meta__name-text hoverable-link-text mr1')[0]?.querySelector('span[dir="ltr"]')?.querySelector('span')?.innerText ?? '-',
                   //@ts-ignore
-                  aboutAuthor: listOfComment[j].getElementsByClassName('comments-post-meta__headline t-12 t-normal t-black--light')[0]?.innerText ?? null,
-                  position: null,
-                  company: null,
-                  experience: null,
-                  about: null,
+                  aboutAuthor: listOfComment[j].getElementsByClassName('comments-post-meta__headline t-12 t-normal t-black--light')[0]?.innerText ?? '-',
+                  position: '-',
+                  company: '-',
+                  experience: '-',
+                  about: '-',
                   link: listOfComment[j].querySelector("a").href,
                 };
                 extensionStorage.setUserInfo(setUserInfoDataClick);

@@ -14,6 +14,7 @@ type Storage = {
   isParsing: boolean;
   userWork: IUserWork;
   textPromt: string;
+  postLink: string;
 };
 
 type StorageData = BaseStorage<Storage> & {
@@ -23,6 +24,7 @@ type StorageData = BaseStorage<Storage> & {
   setUserWork: (isEnabled) => void;
   setIsParsing: (isEnabled) => void;
   setTextPromt: (isEnabled) => void;
+  setPostLink: (isEnabled) => void;
 };
 
 const storage = createStorage<Storage>(
@@ -31,17 +33,18 @@ const storage = createStorage<Storage>(
     theme: "light",
     extensionEnabled: true,
     userInfo: {
-      about: '',
-      aboutAuthor: '',
-      company: '',
-      experience: '',
-      link: '',
-      name: '',
-      position: ''
+      about: '-',
+      aboutAuthor: '-',
+      company: '-',
+      experience: '-',
+      link: '-',
+      name: '-',
+      position: '-'
     },
     isParsing: false,
-    userWork: { projectId: '', link: '' },
-    textPromt: textPromtReset
+    userWork: { projectId: '-', link: '-' },
+    textPromt: textPromtReset,
+    postLink: '-',
   },
   {
     storageType: StorageType.Local,
@@ -60,7 +63,8 @@ export const extensionStorage: StorageData = {
         userInfo: storage.userInfo,
         isParsing: data,
         userWork: storage.userWork,
-        textPromt: storage.textPromt
+        textPromt: storage.textPromt,
+        postLink: storage.postLink
       };
     });
   },
@@ -73,7 +77,8 @@ export const extensionStorage: StorageData = {
         userInfo: data,
         isParsing: false,
         userWork: storage.userWork,
-        textPromt: storage.textPromt
+        textPromt: storage.textPromt,
+        postLink: storage.postLink
       };
     });
   },
@@ -86,7 +91,8 @@ export const extensionStorage: StorageData = {
         userInfo: storage.userInfo,
         isParsing: false,
         userWork: storage.userWork,
-        textPromt: storage.textPromt
+        textPromt: storage.textPromt,
+        postLink: storage.postLink
       };
     });
   },
@@ -99,7 +105,8 @@ export const extensionStorage: StorageData = {
         userInfo: storage.userInfo,
         isParsing: false,
         userWork: storage.userWork,
-        textPromt: storage.textPromt
+        textPromt: storage.textPromt,
+        postLink: storage.postLink
       };
     });
   },
@@ -112,7 +119,8 @@ export const extensionStorage: StorageData = {
         userInfo: storage.userInfo,
         isParsing: false,
         userWork: data,
-        textPromt: storage.textPromt
+        textPromt: storage.textPromt,
+        postLink: storage.postLink
       };
     });
   },
@@ -125,7 +133,22 @@ export const extensionStorage: StorageData = {
         userInfo: storage.userInfo,
         isParsing: false,
         userWork: storage.userWork,
-        textPromt: data
+        textPromt: data,
+        postLink: storage.postLink
+      };
+    });
+  },
+
+  setPostLink: (data: string) => {
+    storage.set((storage) => {
+      return {
+        theme: storage.theme === "light" ? "dark" : "light",
+        extensionEnabled: storage.extensionEnabled,
+        userInfo: storage.userInfo,
+        isParsing: false,
+        userWork: storage.userWork,
+        textPromt: storage.textPromt,
+        postLink: data
       };
     });
   },

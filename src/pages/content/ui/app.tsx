@@ -154,15 +154,16 @@ export const App = () => {
 
   const onClickElement = useCallback((event: any) => {
     const element = event.target as HTMLElement;
-    console.log(element);
-    
+    console.log(element);   
     if(element.parentNode.parentElement.matches('a')){
       onClickClose();
     }else{
     if(element.parentElement.className === "comments-comment-box__submit-button mt3 artdeco-button artdeco-button--1 artdeco-button--primary ember-view") {
+      //@ts-ignore
+      const textCommentedUserExt = element.parentElement.parentElement.parentElement.getElementsByClassName('ql-editor')[0]?.innerText ?? null;
       chrome.storage.sync.get(['dataForSendEvent'], (result) => {
         if(Object.keys(result).length) {
-          sendAnalytics(result.dataForSendEvent.generateCommentText, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
+          sendAnalytics(textCommentedUserExt, userWork.link, userWork.projectId, result.dataForSendEvent.textPost, result.dataForSendEvent.userInfo, result.dataForSendEvent.textComment, result.dataForSendEvent.linkAuthorComment)
           .then((res) => {return res})
           .catch((e) => console.log(e.err))
           .finally(() => {
